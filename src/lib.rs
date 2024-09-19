@@ -1,0 +1,60 @@
+
+
+
+pub mod fltkutils {
+    use std::cell::RefCell;
+    use std::mem::take;
+    use std::rc::Rc;
+    use fltk::{app, button, group, output, window};
+    use fltk::prelude::{GroupExt, InputExt, WidgetBase, WidgetExt};
+
+    pub fn chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
+        let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
+        let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
+
+        let app = app::App::default();
+        let mut win = window::Window::default().with_size(400, 300);
+        let mut row = group::Flex::default_fill().row();
+        let scroll = group::Scroll::default();
+        row.fixed(&scroll, 150);
+        let pack = group::Pack::default().with_size(100, 300);
+
+        for file in flist {
+            let _check = button::CheckButton::default()
+                .with_label(file)
+                .with_size(0, 30);
+        }
+
+        pack.end();
+        scroll.end();
+
+        let mut btn = button::Button::default().with_label("@>");
+        row.fixed(&btn, 30);
+        let mut output = output::MultilineOutput::default();
+
+        row.end();
+        win.end();
+        win.show();
+
+        let keepers_clone = Rc::clone(&keepers);
+        btn.set_callback(move |_b| {
+            output.set_value("");
+            let mut string = String::new();
+            for i in 0..pack.children() {
+                let check: button::CheckButton = button::CheckButton::
+                from_dyn_widget(&pack.child(i).unwrap()).unwrap();
+                if check.is_checked() {
+                    string.push_str(&check.label());
+                    string.push('\n');
+                    keepers_clone.borrow_mut().push(check.label().clone());
+                }
+            }
+            output.set_value(&string);
+        });
+
+        app.run().unwrap();
+
+        let retvec: Vec<String> = take(&mut keepers.borrow_mut());
+        retvec
+    }
+}
