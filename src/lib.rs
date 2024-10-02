@@ -59,9 +59,12 @@ pub mod fltkutils {
         retvec
     }
 
+
+
     pub fn radio_lightbtn_menu(flist: &Vec<String>) -> Vec<String> {
-        let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
-        let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
+
+        let newstring: RefCell<String> = RefCell::new("".to_string());
+        let keepers: Rc<RefCell<String>> = Rc::new(newstring);
 
         let app = app::App::default();
         let mut win = window::Window::default().with_size(400, 300);
@@ -87,7 +90,7 @@ pub mod fltkutils {
         win.end();
         win.show();
 
-        let keepers_clone = Rc::clone(&keepers);
+        let mut keepers_clone = Rc::clone(&keepers);
         btn.set_callback(move |_b| {
             output.set_value("");
             let mut string = String::new();
@@ -96,8 +99,8 @@ pub mod fltkutils {
                 from_dyn_widget(&pack.child(i).unwrap()).unwrap();
                 if radio.is_toggled() {
                     string.push_str(&radio.label());
-                    string.push('\n');
-                    keepers_clone.borrow_mut().push(radio.label().clone());
+                    //string.push('\n');
+                    keepers_clone = radio.label().clone();
                 }
             }
             output.set_value(&string);
