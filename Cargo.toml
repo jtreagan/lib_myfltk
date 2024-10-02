@@ -10,3 +10,5 @@ fltk-evented = "0.5"
 fltk = { version = "^1.4", features = ["fltk-bundled"] }
 
 lib_file = {path = "/home/camascounty/programming/rust/mine/lib_file/"}
+lib_jt = {path = "/home/camascounty/programming/rust/mine/lib_jt/"}
+

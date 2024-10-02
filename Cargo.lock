@@ -193,6 +193,7 @@ dependencies = [
  "fltk",
  "fltk-evented",
  "lib_file",
+ "lib_jt",
 ]
 
 [[package]]
