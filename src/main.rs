@@ -13,15 +13,10 @@ use lib_myfltk::fltkutils::{chkbox_shift_menu, radio_lightbtn_menu};
 fn main() {
 
     let path = file_pathonly();
-    //println!("The chosen path is:  {} \n", path);
-
     let flist = file_get_dir_list(&path);
-    //println!("The files in that directory are:  {:?} \n", flist);
-    
-    radio_lightbtn_menu( &flist);
 
-    //println!("The vector of chosen file names is:  {:?} \n", fnamesvctr);
+    let fname = radio_lightbtn_menu( &flist);
 
-
+    println!("\n The chosen file name is:  {} \n", fname);
 }
 

@@ -61,7 +61,7 @@ pub mod fltkutils {
 
 
 
-    pub fn radio_lightbtn_menu(flist: &Vec<String>) -> Vec<String> {
+    pub fn radio_lightbtn_menu(flist: &Vec<String>) -> String {
 
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
@@ -74,7 +74,7 @@ pub mod fltkutils {
         let pack = group::Pack::default().with_size(100, 300);
 
         for file in flist {
-            let _check = button::RadioLightButton::default()
+            let _radio = button::RadioLightButton::default()
                 .with_label(file)
                 .with_size(0, 30);
         }
@@ -91,25 +91,21 @@ pub mod fltkutils {
         win.show();
 
         let mut keepers_clone = Rc::clone(&keepers);
+
         btn.set_callback(move |_b| {
             output.set_value("");
-            let mut string = String::new();
             for i in 0..pack.children() {
-                let radio: button::RadioLightButton = button::RadioLightButton::
-                from_dyn_widget(&pack.child(i).unwrap()).unwrap();
+                let radio: button::RadioLightButton = button::RadioLightButton::from_dyn_widget(&pack.child(i).unwrap()).unwrap();
                 if radio.is_toggled() {
-                    string.push_str(&radio.label());
-                    //string.push('\n');
-                    keepers_clone = radio.label().clone();
+                    *keepers_clone.borrow_mut() = radio.label().clone();
                 }
             }
-            output.set_value(&string);
         });
 
         app.run().unwrap();
 
-        let retvec: Vec<String> = take(&mut keepers.borrow_mut());
-        retvec
+        let ret: String = keepers.borrow().clone();
+        ret
     }
 
 
