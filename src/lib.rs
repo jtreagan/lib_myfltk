@@ -59,8 +59,6 @@ pub mod fltkutils {
         retvec
     }
 
-
-
     pub fn radio_lightbtn_menu(flist: &Vec<String>) -> String {
 
         let newstring: RefCell<String> = RefCell::new("".to_string());
@@ -68,10 +66,10 @@ pub mod fltkutils {
 
         let app = app::App::default();
         let mut win = window::Window::default().with_size(400, 300);
-        let mut row = group::Flex::default_fill().row();
-        let scroll = group::Scroll::default();
-        row.fixed(&scroll, 150);
-        let pack = group::Pack::default().with_size(100, 300);
+        let mut flex = group::Flex::default().with_size(250, 300);
+        let scroll = group::Scroll::default().with_size(200, 200);
+        //row.fixed(&scroll, 200);
+        let pack = group::Pack::default().with_size(200, 200);
 
         for file in flist {
             let _radio = button::RadioLightButton::default()
@@ -82,18 +80,20 @@ pub mod fltkutils {
         pack.end();
         scroll.end();
 
-        let mut btn = button::Button::default().with_label("@>");
-        row.fixed(&btn, 30);
-        let mut output = output::MultilineOutput::default();
+        //row.fixed(&btn, 30);
+        //let mut output = output::MultilineOutput::default();
 
-        row.end();
+        flex.end();
+
+        let mut submit = button::Button::new(300, 275, 75, 30, "Submit");
+
         win.end();
         win.show();
 
         let mut keepers_clone = Rc::clone(&keepers);
 
-        btn.set_callback(move |_b| {
-            output.set_value("");
+        submit.set_callback(move |_b| {
+            //output.set_value("");
             for i in 0..pack.children() {
                 let radio: button::RadioLightButton = button::RadioLightButton::from_dyn_widget(&pack.child(i).unwrap()).unwrap();
                 if radio.is_toggled() {
