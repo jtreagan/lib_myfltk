@@ -6,7 +6,10 @@ pub mod fltkutils {
     use std::mem::take;
     use std::rc::Rc;
     use fltk::{app, button, group, output, window};
-    use fltk::prelude::{GroupExt, InputExt, WidgetBase, WidgetExt};
+    use fltk::app::App;
+    use fltk::prelude::{GroupExt, InputExt, WidgetBase, WidgetExt, WindowExt};
+
+    /*
 
     pub fn chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
@@ -58,14 +61,17 @@ pub mod fltkutils {
         retvec
     }
 
+
+     */
+
+
     pub fn radio_lightbtn_menu(flist: &Vec<String>) -> String {
 
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
 
-        let app = app::App::default();
         let mut win = window::Window::default().with_size(400, 300);
-        let mut flex = group::Flex::default().with_size(250, 300);
+        let flex = group::Flex::default().with_size(250, 300);
         let scroll = group::Scroll::default().with_size(200, 200);
         let pack = group::Pack::default().with_size(200, 200);
 
@@ -84,7 +90,8 @@ pub mod fltkutils {
         win.end();
         win.show();
 
-        let mut keepers_clone = Rc::clone(&keepers);
+        let keepers_clone = Rc::clone(&keepers);
+        let mut win_clone = win.clone();
 
         submit.set_callback(move |_b| {
             for i in 0..pack.children() {
@@ -93,72 +100,16 @@ pub mod fltkutils {
                     *keepers_clone.borrow_mut() = radio.label().clone();
                 }
             }
-            app.quit();
+            win_clone.hide();
         });
 
-        app.run().unwrap();
+        while win.shown() {
+            app::wait();
+        }
 
         let ret: String = keepers.borrow().clone();
         ret
     }
-
-
-    /*  First attempt at single-item return
-
-    pub fn radio_lightbtn_menu(list: &Vec<String>)  {
-        //let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
-        //let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
-
-        let app = app::App::default();
-        let mut win = window::Window::default().with_size(200, 300);
-        let mut flex = group::Flex::default_fill();
-        let scroll = group::Scroll::default();
-        let mut pack = group::Pack::default().with_size(200,300);
-
-        for fname in list {
-            let _radlite = button::RadioLightButton::default()
-                .with_label(fname)
-                .with_size(75, 50);
-        }
-
-        pack.end();
-        scroll.end();
-
-        // Sets up the  Submit  button
-        let mut btn = button::Button::default().with_label("@Submit");
-        flex.fixed(&btn, 50);
-        //let mut output = output::MultilineOutput::default();
-
-        flex.end();
-        win.end();
-        win.show();
-
-        /*
-        let keepers_clone = Rc::clone(&keepers);
-        btn.set_callback(move |_b| {
-            output.set_value("");
-            let mut string = String::new();
-            for i in 0..pack.children() {
-                let check: button::CheckButton = button::CheckButton::
-                from_dyn_widget(&pack.child(i).unwrap()).unwrap();
-                if check.is_checked() {
-                    string.push_str(&check.label());
-                    string.push('\n');
-                    keepers_clone.borrow_mut().push(check.label().clone());
-                }
-            }
-            output.set_value(&string);
-        });
-
-         */
-
-        app.run().unwrap();
-
-        //let retvec: Vec<String> = take(&mut keepers.borrow_mut());
-        //retvec
-    }
-
-     */
 
 
 }  // --------- End   fltkutils   module ----------
