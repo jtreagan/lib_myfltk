@@ -7,7 +7,6 @@ pub mod fltkutils {
     use std::rc::Rc;
     use fltk::{app, button, group, output, window};
     use fltk::prelude::{GroupExt, InputExt, WidgetBase, WidgetExt};
-    //use lib_jt::vec::*;
 
     pub fn chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
@@ -68,7 +67,6 @@ pub mod fltkutils {
         let mut win = window::Window::default().with_size(400, 300);
         let mut flex = group::Flex::default().with_size(250, 300);
         let scroll = group::Scroll::default().with_size(200, 200);
-        //row.fixed(&scroll, 200);
         let pack = group::Pack::default().with_size(200, 200);
 
         for file in flist {
@@ -79,13 +77,9 @@ pub mod fltkutils {
 
         pack.end();
         scroll.end();
-
-        //row.fixed(&btn, 30);
-        //let mut output = output::MultilineOutput::default();
-
         flex.end();
 
-        let mut submit = button::Button::new(300, 275, 75, 30, "Submit");
+        let mut submit = button::Button::new(300, 175, 75, 30, "Submit");
 
         win.end();
         win.show();
@@ -93,13 +87,13 @@ pub mod fltkutils {
         let mut keepers_clone = Rc::clone(&keepers);
 
         submit.set_callback(move |_b| {
-            //output.set_value("");
             for i in 0..pack.children() {
                 let radio: button::RadioLightButton = button::RadioLightButton::from_dyn_widget(&pack.child(i).unwrap()).unwrap();
                 if radio.is_toggled() {
                     *keepers_clone.borrow_mut() = radio.label().clone();
                 }
             }
+            app.quit();
         });
 
         app.run().unwrap();
