@@ -15,11 +15,11 @@ fn main() {
     let path = file_pathonly();
     let flist = file_get_dir_list(&path);
 
-    let fname = radio_lightbtn_menu(&flist);
+    let fnames = chkbox_shift_menu(&flist);
 
     app.run().unwrap();
 
-    println!("\n The chosen file name is:  {} \n", fname);
+    println!("\n The chosen file names are:  {:?} \n", fnames);
 
 }
 

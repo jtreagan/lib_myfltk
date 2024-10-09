@@ -9,13 +9,11 @@ pub mod fltkutils {
     use fltk::app::App;
     use fltk::prelude::{GroupExt, InputExt, WidgetBase, WidgetExt, WindowExt};
 
-    /*
 
     pub fn chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
         let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
 
-        let app = app::App::default();
         let mut win = window::Window::default().with_size(400, 300);
         let mut row = group::Flex::default_fill().row();
         let scroll = group::Scroll::default();
@@ -55,15 +53,13 @@ pub mod fltkutils {
             output.set_value(&string);
         });
 
-        app.run().unwrap();
+        while win.shown() {
+            app::wait();
+        }
 
         let retvec: Vec<String> = take(&mut keepers.borrow_mut());
         retvec
     }
-
-
-     */
-
 
     pub fn radio_lightbtn_menu(flist: &Vec<String>) -> String {
 
