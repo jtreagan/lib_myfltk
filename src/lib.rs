@@ -1,16 +1,15 @@
-#![warn(unused_imports)]
-
 
 pub mod fltkutils {
     use std::cell::RefCell;
     use std::mem::take;
     use std::rc::Rc;
-    use fltk::{app, button, group, output, window};
-    use fltk::app::App;
-    use fltk::prelude::{GroupExt, InputExt, WidgetBase, WidgetExt, WindowExt};
+    use fltk::{app, button, group, menu, output, text, window};
+    use fltk::app::{quit, set_font_size, App};
+    use fltk::enums::{Color, Shortcut};
+    use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
+    use fltk::text::TextEditor;
 
-
-    pub fn chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
+    pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
         let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
 
@@ -61,7 +60,7 @@ pub mod fltkutils {
         retvec
     }
 
-    pub fn radio_lightbtn_menu(flist: &Vec<String>) -> String {
+    pub fn fltk_radio_lightbtn_menu(flist: &Vec<String>) -> String {
 
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
@@ -105,6 +104,55 @@ pub mod fltkutils {
 
         let ret: String = keepers.borrow().clone();
         ret
+    }
+
+    pub fn fltk_simple_editor(startertxt: &str, winlabel: &str) -> String {
+        let edtr = App::default();
+        let mut buf = text::TextBuffer::default();
+        let mut win = window::Window::default().with_size(800, 300);
+        set_font_size(20);
+        win.set_color(Color::Blue);
+        win.set_label(winlabel);
+        win.make_resizable(true);
+
+        fltk_simple_editor_menubar();
+
+        buf.set_text(startertxt);
+        let mut simped = TextEditor::default()
+            .with_size(770, 222)
+            .center_of_parent();
+
+        simped.set_buffer(buf.clone());   // Clone is used here to avoid an ownership error.
+        simped.wrap_mode(text::WrapMode::AtBounds, 0);
+        simped.set_color(Color::White);
+        simped.set_text_size(22);
+        simped.set_text_color(Color::Black);
+
+        win.end();
+        win.show();
+
+        //editor_menubar();
+
+        edtr.run().unwrap();
+
+        buf.text()
+    }
+
+    pub fn fltk_simple_editor_menubar() -> menu::MenuBar {
+
+        let mut menubar = menu::MenuBar::new(0, 0, 800, 40, "");
+
+        let quit_idx = menubar.add(
+            "File/Finished\t",
+            Shortcut::None,
+            menu::MenuFlag::Normal,
+            |_| {
+                quit();
+            },
+        );
+        menubar.at(quit_idx).unwrap().set_label_color(Color::Red);
+
+        menubar
     }
 
 
