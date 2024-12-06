@@ -7,7 +7,7 @@ pub mod fltkutils {
     use fltk::app::{quit, set_font_size, App};
     use fltk::enums::{Color, Shortcut};
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
-    use fltk::text::TextEditor;
+    use fltk::text::{TextBuffer, TextEditor};
 
     pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
@@ -154,6 +154,18 @@ pub mod fltkutils {
 
         menubar
     }
+
+    pub fn fltk_replace_highlighted_text(edtr: &TextEditor, buf: &mut TextBuffer, rpltxt: &str) {
+        let (x, y) = match edtr.buffer().unwrap().selection_position() {
+            Some(position) => position,
+            None => panic!("\nError!  Could not find a cursor position in the editor.\n"),
+        };
+
+        buf.remove(x, y);                         // Remove the selected text
+        buf.insert(x, rpltxt);                    // Insert new text and
+        edtr.buffer().unwrap().unselect();        // Unhighlight text
+    }
+
 
 
 }  // --------- End   fltkutils   module ----------
