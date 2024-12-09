@@ -3,11 +3,12 @@ pub mod fltkutils {
     use std::cell::RefCell;
     use std::mem::take;
     use std::rc::Rc;
-    use fltk::{app, button, group, menu, output, text, window};
+    use fltk::{app, button, button::Button, group, menu, output, text, window};
     use fltk::app::{quit, set_font_size, App};
     use fltk::enums::{Color, Shortcut};
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
+    use fltk::window::Window;
 
     pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
@@ -166,6 +167,49 @@ pub mod fltkutils {
         edtr.buffer().unwrap().unselect();        // Unhighlight text
     }
 
+    pub fn fltk_popup_2btn(closure1: Box<dyn Fn() + 'static>, closure2: Box<dyn Fn() + 'static>) {
+        let mut popupwin = Window::default().with_size(575, 100);
 
+        let mut but1 = Button::new(25, 25, 250, 40, "1");
+        let mut but2 = Button::new(300, 25, 250, 40, "2");
+
+        popupwin.end();
+        popupwin.show();
+
+        let mut winclone1 = popupwin.clone();
+        but1.set_callback(move |_| {
+            closure1();
+            winclone1.hide();
+        });
+
+        let mut winclone2 = popupwin.clone();
+        but2.set_callback(move |_| {
+            closure2();
+            winclone2.hide();
+        });
+
+
+    }
+
+    /*                  Example for using   fltk_popup_2btn()
+
+    fn main() {
+    let app = app::App::default();
+
+    let bttn1click = || {
+        println!("\n Button 1 was clicked \n");
+    };
+
+    let bttn2click = || {
+        println!("\n Button 2 was clicked \n");
+    };
+
+    popup_2btn(Box::new(bttn1click), Box::new(bttn2click));
+
+    app.run().unwrap();
+}
+
+
+     */   //Example for using   fltk_popup_2btn()
 
 }  // --------- End   fltkutils   module ----------
