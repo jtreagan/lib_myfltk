@@ -167,11 +167,13 @@ pub mod fltkutils {
         edtr.buffer().unwrap().unselect();        // Unhighlight text
     }
 
-    pub fn fltk_popup_2btn(closure1: Box<dyn Fn() + 'static>, closure2: Box<dyn Fn() + 'static>) {
-        let mut popupwin = Window::default().with_size(575, 100);
+    pub fn fltk_popup_2btn(closure1: Box<dyn Fn() + 'static>, label1: &str,
+                           closure2: Box<dyn Fn() + 'static>, label2: &str)
+    {
+        let mut popupwin = Window::default().with_size(575, 100).center_of_parent();
 
-        let mut but1 = Button::new(25, 25, 250, 40, "1");
-        let mut but2 = Button::new(300, 25, 250, 40, "2");
+        let mut but1 = Button::new(25, 25, 250, 40, label1);
+        let mut but2 = Button::new(300, 25, 250, 40, label2);
 
         popupwin.end();
         popupwin.show();
@@ -204,7 +206,8 @@ pub mod fltkutils {
         println!("\n Button 2 was clicked \n");
     };
 
-    popup_2btn(Box::new(bttn1click), Box::new(bttn2click));
+    fltk_popup_2btn(Box::new(bttn1click), "Button 1",
+                    Box::new(bttn2click), "Button 2");
 
     app.run().unwrap();
 }
