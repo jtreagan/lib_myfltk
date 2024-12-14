@@ -167,8 +167,8 @@ pub mod fltkutils {
         edtr.buffer().unwrap().unselect();        // Unhighlight text
     }
 
-    pub fn fltk_popup_2btn(closure1: Box<dyn Fn() + 'static>, label1: &str,
-                           closure2: Box<dyn Fn() + 'static>, label2: &str)
+    pub fn fltk_popup_2btn(mut closure1: Box<dyn FnMut() + 'static>, label1: &str,
+                           mut closure2: Box<dyn FnMut() + 'static>, label2: &str)
     {
         let mut popupwin = Window::default().with_size(575, 100).center_of_parent();
 
