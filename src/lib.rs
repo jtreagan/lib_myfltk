@@ -9,6 +9,7 @@ pub mod fltkutils {
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
     use fltk::window::Window;
+    use crate::fltkutils;
 
     pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
@@ -112,7 +113,7 @@ pub mod fltkutils {
         let mut buf = text::TextBuffer::default();
         let mut win = window::Window::default().with_size(800, 300);
         set_font_size(20);
-        win.set_color(Color::Blue);
+        win.set_color(Color::Yellow);
         win.set_label(winlabel);
         win.make_resizable(true);
 
@@ -131,8 +132,6 @@ pub mod fltkutils {
 
         win.end();
         win.show();
-
-        //editor_menubar();
 
         edtr.run().unwrap();
 
@@ -167,36 +166,57 @@ pub mod fltkutils {
         edtr.buffer().unwrap().unselect();        // Unhighlight text
     }
 
-    pub fn fltk_popup_2btn(mut closure1: Box<dyn FnMut() + 'static>, label1: &str,
-                           mut closure2: Box<dyn FnMut() + 'static>, label2: &str)
+    pub fn fltk_popup_2btn(primwin: &Window, mut closure1: Box<dyn FnMut() + 'static>, label1: &str,
+                           mut closure2: Box<dyn FnMut() + 'static>, label2: &str) -> Window
     {
-        let mut popupwin = Window::default().with_size(575, 100).center_of_parent();
+
+        // region Calculate the window position -- tied to the primary window.
+        let win_center = fltkutils::fltk_find_center_wdgt(primwin);
+        let popwidth = 575;  // popwidth & popheight are set to accomodate the size of the buttons.
+        let popheight = 100;
+
+        let xxx = win_center.0 - popwidth / 2;
+        let yyy = win_center.1 - popheight / 2;
+        // endregion
+
+        // region Create the popup window with buttons
+        let popwin = Window::default().with_size(popwidth, popheight).with_pos(xxx, yyy);
 
         let mut but1 = Button::new(25, 25, 250, 40, label1);
         let mut but2 = Button::new(300, 25, 250, 40, label2);
+        // endregion
 
-        popupwin.end();
-        popupwin.show();
-
-        let mut winclone1 = popupwin.clone();
+        // region Do the button callbacks
+        let mut winclone1 = popwin.clone();
         but1.set_callback(move |_| {
             closure1();
             winclone1.hide();
         });
 
-        let mut winclone2 = popupwin.clone();
+        let mut winclone2 = popwin.clone();
         but2.set_callback(move |_| {
             closure2();
             winclone2.hide();
         });
+        // endregion
 
-
+        popwin
     }
 
     /*                  Example for using   fltk_popup_2btn()
 
-    fn main() {
+use fltk::{app, window};
+use fltk::enums::Color;
+use fltk::prelude::{GroupExt, WidgetBase, WidgetExt};
+use lib_myfltk::fltkutils::*;
+
+fn main() {
     let app = app::App::default();
+
+    let mut primwin = window::Window::new(1000, 100, 700, 850, "Two Button Popup Example");
+    primwin.set_color(Color::Yellow);
+    primwin.end();
+    primwin.show();
 
     let bttn1click = || {
         println!("\n Button 1 was clicked \n");
@@ -206,13 +226,34 @@ pub mod fltkutils {
         println!("\n Button 2 was clicked \n");
     };
 
-    fltk_popup_2btn(Box::new(bttn1click), "Button 1",
+    let mut popup = fltk_popup_2btn(&primwin, Box::new(bttn1click), "Button 1",
                     Box::new(bttn2click), "Button 2");
+
+    popup.end();
+    popup.show();
 
     app.run().unwrap();
 }
 
 
      */   //Example for using   fltk_popup_2btn()
+
+    pub fn fltk_find_center_wdgt(wdgt: &Window) -> (i32, i32) {
+        let xxx = wdgt.x();
+        let yyy = wdgt.y();
+        let www = wdgt.w();
+        let hhh = wdgt.h();
+
+        println!("\n The top left corner of the primary window is:  ({}, {}) \n", xxx, yyy);
+        println!("\n The width & height of the primary window is:  ({}, {}) \n", www, hhh);
+
+        // Calculate the center position of primwin
+        let center_x = (xxx + www / 2) as i32;
+        let center_y = (yyy + hhh / 2) as i32;
+
+        println!("\n Center of primwin is: ({}, {}) \n", center_x, center_y);
+
+        (center_x, center_y)
+    }
 
 }  // --------- End   fltkutils   module ----------

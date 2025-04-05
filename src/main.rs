@@ -5,24 +5,34 @@
 
 */
 
-//use fltk::app;
-//use lib_file::file_fltk::file_pathonly;
-//use lib_file::file_mngmnt::file_get_dir_list;
-//use lib_myfltk::fltkutils::*;
+use fltk::{app, window};
+use fltk::enums::Color;
+use fltk::prelude::{GroupExt, WidgetBase, WidgetExt};
+use lib_myfltk::fltkutils::*;
 
 fn main() {
-    //let app = app::App::default();
+    let app = app::App::default();
 
-    //let path = file_pathonly();
-    //let flist = file_get_dir_list(&path);
+    let mut primwin = window::Window::new(1000, 100, 700, 850, "Two Button Popup Example");
+    primwin.set_color(Color::Yellow);
+    primwin.end();
+    primwin.show();
 
-    //let fnames = chkbox_shift_menu(&flist);
+    let bttn1click = || {
+        println!("\n Button 1 was clicked \n");
+    };
 
-    //app.run().unwrap();
+    let bttn2click = || {
+        println!("\n Button 2 was clicked \n");
+    };
 
-    //println!("\n The chosen file names are:  {:?} \n", fnames);
+    let mut popup = fltk_popup_2btn(&primwin, Box::new(bttn1click), "Button 1",
+                    Box::new(bttn2click), "Button 2");
 
-    println!("Hello, world!");
+    popup.end();
+    popup.show();
 
+    app.run().unwrap();
 }
+
 
