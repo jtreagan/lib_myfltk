@@ -7,5 +7,5 @@ edition = "2021"
 fltk = { version = "^1.4", features = ["fltk-bundled"] }
 
 # Reagan-created libraries
-lib_utils = {path = "/home/jtreagan/programming/rust/mine/lib_utils/"}
+lib_utils = { git = "https://github.com/jtreagan/lib_utils.git" }
 

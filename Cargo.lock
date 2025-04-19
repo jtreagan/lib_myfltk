@@ -82,6 +82,7 @@ dependencies = [
 [[package]]
 name = "lib_utils"
 version = "0.1.0"
+source = "git+https://github.com/jtreagan/lib_utils.git#b86621e83a539d8aa13e9f2e6cb6243a870460c0"
 
 [[package]]
 name = "once_cell"
