@@ -1,3 +1,13 @@
+// region Credit Constants
+const _VERSION: &str = "0.0.5";
+const _AUTHOR: &str = "John T. Reagan";
+const _LICENSE: &str = "MIT";
+const _LICENSE_URL: &str = "https://opensource.org/licenses/MIT";
+const _COPYRIGHT: &str = "Copyright (c) 2025, John T. Reagan";
+const _REPOSITORY: &str = "https://github.com/jtreagan/lib_file";
+// endregion
+
+
 
 pub mod fltkutils {
     use std::cell::RefCell;
@@ -9,6 +19,7 @@ pub mod fltkutils {
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
     use fltk::window::Window;
+    use lib_utils::utilities::util_longest_string_in_vec;
     use crate::fltkutils;
 
     pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
@@ -63,14 +74,16 @@ pub mod fltkutils {
     }
 
     pub fn fltk_radio_lightbtn_menu(flist: &Vec<String>) -> String {
-
+        // Why are you using RefCells?  Is there a simpler way?
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
 
+        let longest = util_longest_string_in_vec(&flist);
+
         let mut win = window::Window::default().with_size(400, 300);
-        let flex = group::Flex::default().with_size(250, 300);
-        let scroll = group::Scroll::default().with_size(200, 200);
-        let pack = group::Pack::default().with_size(200, 200);
+        let flex = group::Flex::default().with_size(250, 300);   // Do you really need this?
+        let scroll = group::Scroll::default().with_size(200, longest as i32 + 10);
+        let pack = group::Pack::default().with_size(200, longest as i32 + 10);  // Need this to organize the buttons.
 
         for file in flist {
             let _radio = button::RadioLightButton::default()
@@ -244,16 +257,295 @@ fn main() {
         let www = wdgt.w();
         let hhh = wdgt.h();
 
-        println!("\n The top left corner of the primary window is:  ({}, {}) \n", xxx, yyy);
-        println!("\n The width & height of the primary window is:  ({}, {}) \n", www, hhh);
-
         // Calculate the center position of primwin
         let center_x = (xxx + www / 2) as i32;
         let center_y = (yyy + hhh / 2) as i32;
 
-        println!("\n Center of primwin is: ({}, {}) \n", center_x, center_y);
-
         (center_x, center_y)
     }
 
-}  // --------- End   fltkutils   module ----------
+}  // --------- End   fltkutils   module ----------pub mod input {
+
+pub mod input_fltk {
+/*
+    -- Note that these functions rely on the global variable
+        APP_FLTK having been declared an initialized elsewhere in the program
+        that is accessing this library.
+
+*/  // Note
+/*
+// TODO: Could these all be turned generic instead of needing
+//      a function for each type?
+// todo: Still getting "unused" warnings.  Fix it if you can figure out how.
+// todo: Having the APP_FLTK global variable declared & initialized both
+//          here and in the app accessing this library is potentially a problem.
+//          Is it?  Do you need to fix it?
+
+*/  // TODO's
+
+use fltk::app::App;
+use fltk::{frame, group, input, window};
+use fltk::enums::CallbackTrigger;
+use fltk::prelude::{GroupExt, InputExt, WidgetExt, WindowExt};
+
+
+pub fn input_strvec(app: &App, prompt: &str, horiz: i32, vert: i32) -> Vec<String> {
+    let mut list = Vec::new();
+    let mut i = input_i64(app, "How many items in your list?");
+
+    while app.wait() && i > 0 {
+        let newelem = input_string(app, prompt, horiz, vert);
+        list.push(newelem);
+        i -= 1;
+    }
+
+    list
+}
+
+pub fn input_f64vec(app: &App, prompt: &str) -> Vec<f64> {
+    let mut list = Vec::new();
+    let mut i = input_i64(app, "How many items in your list?");
+
+
+
+    while app.wait() && i > 0 {
+        let newelem = input_f64(app, prompt);
+        list.push(newelem);
+        i -= 1;
+    }
+    list
+}
+
+pub fn input_charvec(app: &App, prompt: &str) -> Vec<char> {
+    let mut list = Vec::new();
+    let mut i = input_i64(app, "How many items in your list?");
+
+    while app.wait() && i > 0 {
+        let newelem = input_char(app, prompt);
+        list.push(newelem);
+        i -= 1;
+    }
+    list
+}
+
+pub fn input_i64vec(app: &App, prompt: &str) -> Vec<i64> {
+    let mut list = Vec::new();
+    let mut i = input_i64(app, "How many items in your list?");
+
+    while app.wait() && i > 0 {
+        let newelem = input_i64(app, prompt);
+        list.push(newelem);
+        i -= 1;
+    }
+    list
+}
+
+
+pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
+    /*
+ Works best if you set the horiz and vert to values 10 pixels less than the size
+      of the main window with the flex size set to 10 pixels less than that.
+ -- For large input windows try 790 x 490 first.
+ -- For small input windows try 300 x 90 and adjust by trial and error.
+
+*/ // Notes
+
+    // region Set up the input window and input frame
+    let mut win = window::Window::default()
+        .with_size(horiz, vert)
+        .with_label("Input Window");
+    win.make_resizable(true);
+
+    let flex = group::Flex::default()
+        .with_size(200, 75)  // TODO: Make dynamic tied to horiz & vert.
+        .column()
+        .center_of_parent();
+
+    let _prompttext = frame::Frame::default().with_label(prompt);
+    // endregion
+
+    // region Set up the input widget inside the frame.
+    let mut input_widget = input::Input::default();
+    input_widget.set_trigger(CallbackTrigger::EnterKey);
+
+    // Set the input widget's callback.
+    let mut win2 = win.clone();
+    input_widget.set_callback(move |_| {
+        win2.hide();
+    });
+
+    flex.end();
+    win.end();
+    win.show();
+    // endregion
+
+    // region Deal with the input
+    while win.shown() {
+        app.wait();
+    }
+    input_widget.value()
+    // endregion
+}
+
+pub fn input_f64(app: &App, prompt: &str) -> f64 {
+
+    // region Set up the input window and input frame
+    let mut win = window::Window::default()
+        .with_size(400, 100)
+        .with_label("Input Window");
+    win.make_resizable(true);
+
+    let flex = group::Flex::default()
+        .with_size(200, 75)
+        .column()
+        .center_of_parent();
+
+    let _prompttext = frame::Frame::default().with_label(prompt);
+    // endregion
+
+    // region Set up the input widget inside the frame.
+    let mut input_widget = input::FloatInput::default();
+    input_widget.set_trigger(CallbackTrigger::EnterKey);
+
+    // Set the input widget's callback.
+    let mut win2 = win.clone();
+    input_widget.set_callback(move |_| {
+        win2.hide();
+    });
+
+    flex.end();
+    win.end();
+    win.show();
+
+    // endregion
+
+    // region Deal with the input
+    while win.shown() {
+        app.wait();
+    }
+    input_widget.value().trim().parse::<f64>().unwrap()
+
+    // endregion
+}
+
+pub fn input_char(app: &App, prompt: &str) -> char {
+
+    // region Set up the input window and input frame
+    let mut win = window::Window::default()
+        .with_size(400, 100)
+        .with_label("Input Window");
+    win.make_resizable(true);
+
+    let flex = group::Flex::default()
+        .with_size(200, 75)
+        .column()
+        .center_of_parent();
+
+    let _prompttext = frame::Frame::default().with_label(prompt);
+    // endregion
+
+    // region Set up the input widget inside the frame.
+    let mut input_widget = input::Input::default();
+    input_widget.set_trigger(CallbackTrigger::EnterKey);
+
+    // Set the input widget's callback.
+    let mut win2 = win.clone();
+    input_widget.set_callback(move |_| {
+        win2.hide();
+    });
+
+    flex.end();
+    win.end();
+    win.show();
+    // endregion
+
+    // region Deal with the input
+    while win.shown() {
+        app.wait();
+    }
+    input_widget.value().chars().nth(0).unwrap()
+
+    // endregion
+}
+
+pub fn input_i64(app: &App, prompt: &str) -> i64 {
+
+    // region Set up the input window and input frame
+    let mut win = window::Window::default()
+        .with_size(400, 100)
+        .with_label("Input Window");
+    win.make_resizable(true);
+
+    let flex = group::Flex::default()
+        .with_size(200, 75)
+        .column()
+        .center_of_parent();
+
+    let _prompttext = frame::Frame::default().with_label(prompt);
+    // endregion
+
+    // region Set up the input widget inside the frame.
+    let mut input_widget = input::IntInput::default();
+    input_widget.set_trigger(CallbackTrigger::EnterKey);
+
+    // Set the input widget's callback.
+    let mut win2 = win.clone();
+    input_widget.set_callback(move |_| {
+        win2.hide();
+    });
+
+    flex.end();
+    win.end();
+    win.show();
+
+    // endregion
+
+    // region Deal with the input
+    while win.shown() {
+        app.wait();
+    }
+    input_widget.value().trim().parse::<i64>().unwrap()
+
+    // endregion
+}
+
+
+/*
+    pub fn input_str_large(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
+        // Works best if you set the horiz and vert to values 10 pixels less than the size
+        //      of the main window with the flex size set to 10 pixels less than that.
+
+        let mut win = window::Window::default()
+            .with_size(horiz, vert)
+            .with_label("Input Window");
+        win.make_resizable(true);
+
+        let flex = group::Flex::default()
+            .with_size(horiz-10, vert-10)
+            .column()
+            .center_of_parent();
+
+        let _prompttext = frame::Frame::default().with_label(prompt);
+
+        let mut input = input::MultilineInput::default();
+        input.set_wrap(true);
+        input.set_trigger(CallbackTrigger::EnterKey);
+
+        let mut win2 = win.clone();
+        input.set_callback(move |_input| {
+            win2.hide();
+        });
+
+        flex.end();
+        win.end();
+        win.show();
+
+        while win.shown() {
+            app.wait();
+        }
+
+        input.value()
+    }
+
+ */  // input_str_large()
+}

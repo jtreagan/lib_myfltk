@@ -1,8 +1,8 @@
 
-/*                            Goals
+/*
+                        lib_myfltk
 
-    -- Done!!!
-
+    Utility functions for use with the FLTK.rs GUI crate.
 */
 
 use fltk::{app, window};

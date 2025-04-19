@@ -3,12 +3,9 @@ name = "lib_myfltk"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-fltk-evented = "0.5"
 fltk = { version = "^1.4", features = ["fltk-bundled"] }
 
-lib_file = {path = "/home/jtreagan/programming/rust/mine/lib_file/"}
-lib_jt = {path = "/home/jtreagan/programming/rust/mine/lib_jt/"}
+# Reagan-created libraries
+lib_utils = {path = "/home/jtreagan/programming/rust/mine/lib_utils/"}
 
