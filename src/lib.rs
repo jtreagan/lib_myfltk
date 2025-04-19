@@ -5,7 +5,7 @@
     LICENSE_URL = "https://opensource.org/licenses/MIT";
     COPYRIGHT = "Copyright (c) 2025, John T. Reagan";
     REPOSITORY = "https://github.com/jtreagan/lib_file";
-*/  Credits
+*/  // Credits
 
 
 pub mod fltkutils {
