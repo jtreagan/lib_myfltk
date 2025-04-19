@@ -1,12 +1,11 @@
-// region Credit Constants
-const _VERSION: &str = "0.0.5";
-const _AUTHOR: &str = "John T. Reagan";
-const _LICENSE: &str = "MIT";
-const _LICENSE_URL: &str = "https://opensource.org/licenses/MIT";
-const _COPYRIGHT: &str = "Copyright (c) 2025, John T. Reagan";
-const _REPOSITORY: &str = "https://github.com/jtreagan/lib_file";
-// endregion
-
+/*
+    VERSION = "0.0.5";
+    AUTHOR = "John T. Reagan";
+    LICENSE = "MIT";
+    LICENSE_URL = "https://opensource.org/licenses/MIT";
+    COPYRIGHT = "Copyright (c) 2025, John T. Reagan";
+    REPOSITORY = "https://github.com/jtreagan/lib_file";
+*/  Credits
 
 
 pub mod fltkutils {
