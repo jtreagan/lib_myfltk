@@ -37,8 +37,6 @@ pub mod fltkutils {
     /// in the `flist` vector.  Returns a vector of the items that were
     /// chosen by the user.
     pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
-        // todo: Create a new, identical function that doesn't use RefCell.
-
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
         let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
 
@@ -92,9 +90,6 @@ pub mod fltkutils {
     /// Creates a menu of radio buttons using the `flist` vector.
     /// Active items are highlighted by a small light.
     pub fn fltk_radio_lightbtn_menu(flist: &Vec<String>) -> String {
-        // todo: Create a new, identical function that doesn't use RefCell.
-
-        // Why are you using RefCells?  Is there a simpler way?
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
 
@@ -281,9 +276,6 @@ pub mod fltkutils {
     /// Returns the coordinates of the center of `win`.
     ///
     pub fn fltk_find_center_wndw(win: &Window) -> (i32, i32) {
-        // todo: Could this be made generic to work with any widget,
-        //          not just windows?
-
         let xxx = win.x();
         let yyy = win.y();
         let www = win.w();
@@ -301,7 +293,6 @@ pub mod fltkutils {
 pub mod input_fltk {
 
 /*
-
 // todo: Still getting "unused" warnings.  Fix it if you can figure out how.
 
 */  // TODO's
@@ -311,6 +302,8 @@ use fltk::{frame, group, input, window};
 use fltk::enums::CallbackTrigger;
 use fltk::prelude::{GroupExt, InputExt, WidgetExt, WindowExt};
 
+/// Allows the user to input a vector of Strings.
+///
 pub fn input_strvec(app: &App, prompt: &str, horiz: i32, vert: i32) -> Vec<String> {
     let mut list = Vec::new();
     let mut i = input_i64(app, "How many items in your list?");
@@ -324,6 +317,8 @@ pub fn input_strvec(app: &App, prompt: &str, horiz: i32, vert: i32) -> Vec<Strin
     list
 }
 
+/// Allows the user to input a vector of f64 integers.
+///
 pub fn input_f64vec(app: &App, prompt: &str) -> Vec<f64> {
     let mut list = Vec::new();
     let mut i = input_i64(app, "How many items in your list?");
@@ -338,6 +333,8 @@ pub fn input_f64vec(app: &App, prompt: &str) -> Vec<f64> {
     list
 }
 
+/// Allows the user to input a vector of characters.
+///
 pub fn input_charvec(app: &App, prompt: &str) -> Vec<char> {
     let mut list = Vec::new();
     let mut i = input_i64(app, "How many items in your list?");
@@ -350,6 +347,8 @@ pub fn input_charvec(app: &App, prompt: &str) -> Vec<char> {
     list
 }
 
+/// Allows the user to input a vector of i64 integers.
+///
 pub fn input_i64vec(app: &App, prompt: &str) -> Vec<i64> {
     let mut list = Vec::new();
     let mut i = input_i64(app, "How many items in your list?");
@@ -363,14 +362,14 @@ pub fn input_i64vec(app: &App, prompt: &str) -> Vec<i64> {
 }
 
 
-pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
-    /*
- Works best if you set the horiz and vert to values 10 pixels less than the size
-      of the main window with the flex size set to 10 pixels less than that.
- -- For large input windows try 790 x 490 first.
- -- For small input windows try 300 x 90 and adjust by trial and error.
 
-*/ // Notes
+/// Uses FLTK's Input widget to prompt the user to enter String data.
+///
+/// Works best if you set the horiz and vert to values 10 pixels less than the size
+///      of the main window with the flex size set to 10 pixels less than that.
+/// -- For large input windows try 790 x 490 first.
+/// -- For small input windows try 300 x 90 and adjust by trial and error.
+pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
 
     // region Set up the input window and input frame
     let mut win = window::Window::default()
@@ -379,7 +378,7 @@ pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
     win.make_resizable(true);
 
     let flex = group::Flex::default()
-        .with_size(200, 75)  // TODO: Make dynamic tied to horiz & vert.
+        .with_size(200, 75)
         .column()
         .center_of_parent();
 
@@ -409,6 +408,8 @@ pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
     // endregion
 }
 
+/// Uses FLTK's Input widget to prompt the user to enter f64 data.
+///
 pub fn input_f64(app: &App, prompt: &str) -> f64 {
 
     // region Set up the input window and input frame
@@ -450,6 +451,8 @@ pub fn input_f64(app: &App, prompt: &str) -> f64 {
     // endregion
 }
 
+/// Uses FLTK's Input widget to prompt the user to enter character data.
+///
 pub fn input_char(app: &App, prompt: &str) -> char {
 
     // region Set up the input window and input frame
@@ -490,6 +493,8 @@ pub fn input_char(app: &App, prompt: &str) -> char {
     // endregion
 }
 
+/// Uses FLTK's Input widget to prompt the user to enter i64 integer data.
+///
 pub fn input_i64(app: &App, prompt: &str) -> i64 {
 
     // region Set up the input window and input frame
@@ -530,7 +535,6 @@ pub fn input_i64(app: &App, prompt: &str) -> i64 {
 
     // endregion
 }
-
 
 /*
     pub fn input_str_large(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
