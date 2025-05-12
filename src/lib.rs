@@ -1,11 +1,23 @@
-/*
-    VERSION = "0.0.5";
-    AUTHOR = "John T. Reagan";
-    LICENSE = "MIT";
-    LICENSE_URL = "https://opensource.org/licenses/MIT";
-    COPYRIGHT = "Copyright (c) 2025, John T. Reagan";
-    REPOSITORY = "https://github.com/jtreagan/lib_file";
-*/  // Credits
+//! #lib_myfltk
+//!
+//! ## Utility functions for use with the FLTK.rs GUI crate.
+//!
+//! The functions in the modules below were written to help
+//! with my projects that use the FLTK-RS GUI crate.
+//! I've used them in several different projects
+//! which is why I've kept them together in a separate crate.
+//! Their greatest weakness is poor error handling, so keep that
+//! in mind if you choose to use them.  By the way, I need help getting
+//! those weaknesses corrected, so if you feel like taking that on,
+//! please check out the issues tab in this crate's repository.
+//!
+//!
+//!    * VERSION = "0.0.5";
+//!    * AUTHOR = "John T. Reagan";
+//!    * LICENSE = "MIT";
+//!    * LICENSE_URL = "<https://opensource.org/licenses/MIT>";
+//!    * COPYRIGHT = "Copyright (c) 2025, John T. Reagan";
+//!    * REPOSITORY = "<https://github.com/jtreagan/lib_myfltk>";
 
 
 pub mod fltkutils {
@@ -21,11 +33,16 @@ pub mod fltkutils {
     use lib_utils::utilities::util_longest_string_in_vec;
     use crate::fltkutils;
 
+    /// Creates a checkbox shift menu of the items passed to the function
+    /// in the `flist` vector.  Returns a vector of the items that were
+    /// chosen by the user.
     pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
+        // todo: Create a new, identical function that doesn't use RefCell.
+
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
         let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
 
-        let mut win = window::Window::default().with_size(400, 300);
+        let mut win = Window::default().with_size(400, 300);
         let mut row = group::Flex::default_fill().row();
         let scroll = group::Scroll::default();
         row.fixed(&scroll, 150);
@@ -40,7 +57,7 @@ pub mod fltkutils {
         pack.end();
         scroll.end();
 
-        let mut btn = button::Button::default().with_label("@>");
+        let mut btn = Button::default().with_label("@>");
         row.fixed(&btn, 30);
         let mut output = output::MultilineOutput::default();
 
@@ -72,7 +89,11 @@ pub mod fltkutils {
         retvec
     }
 
+    /// Creates a menu of radio buttons using the `flist` vector.
+    /// Active items are highlighted by a small light.
     pub fn fltk_radio_lightbtn_menu(flist: &Vec<String>) -> String {
+        // todo: Create a new, identical function that doesn't use RefCell.
+
         // Why are you using RefCells?  Is there a simpler way?
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
@@ -120,6 +141,8 @@ pub mod fltkutils {
         ret
     }
 
+    /// Creates a simple, no-frills editor using FLTK's TextEditor struct.
+    /// Returns the final contents of the editor.
     pub fn fltk_simple_editor(startertxt: &str, winlabel: &str) -> String {
         let edtr = App::default();
         let mut buf = text::TextBuffer::default();
@@ -150,6 +173,9 @@ pub mod fltkutils {
         buf.text()
     }
 
+    /// Creates a menubar to be used with the `fltk_simple_editor()`.
+    /// The new menubar only has ine entry -- `File/Quit` -- that provides
+    /// a pattern that can be used to create more menu items
     pub fn fltk_simple_editor_menubar() -> menu::MenuBar {
 
         let mut menubar = menu::MenuBar::new(0, 0, 800, 40, "");
@@ -167,6 +193,8 @@ pub mod fltkutils {
         menubar
     }
 
+    /// Replaces highlighted text in a `TextEditor` with the text
+    /// passe in the `rpltxt` parameter.
     pub fn fltk_replace_highlighted_text(edtr: &TextEditor, buf: &mut TextBuffer, rpltxt: &str) {
         let (x, y) = match edtr.buffer().unwrap().selection_position() {
             Some(position) => position,
@@ -178,12 +206,47 @@ pub mod fltkutils {
         edtr.buffer().unwrap().unselect();        // Unhighlight text
     }
 
+    /// Creates a popup window that contains two buttons.
+    ///
+    /// Example:
+    ///
+    ///     use fltk::{app, window};
+    ///     use fltk::enums::Color;
+    ///     use fltk::prelude::{GroupExt, WidgetBase, WidgetExt};
+    ///     use lib_myfltk::fltkutils::*;
+    ///
+    ///     fn main() {
+    ///         let app = app::App::default();
+    ///
+    ///         let mut primwin = window::Window::new(1000, 100, 700, 850, "Two Button Popup Example");
+    ///         primwin.set_color(Color::Yellow);
+    ///         primwin.end();
+    ///         primwin.show();
+    ///
+    ///         let bttn1click = || {
+    ///             println!("\n Button 1 was clicked \n");
+    ///         };
+    ///
+    ///         let bttn2click = || {
+    ///             println!("\n Button 2 was clicked \n");
+    ///         };
+    ///
+    ///         let mut popup = fltk_popup_2btn(&primwin, Box::new(bttn1click), "Button 1",
+    ///                         Box::new(bttn2click), "Button 2");
+    ///
+    ///         popup.end();
+    ///         popup.show();
+    ///
+    ///         app.run().unwrap();
+    ///     }
+    ///
+    ///
     pub fn fltk_popup_2btn(primwin: &Window, mut closure1: Box<dyn FnMut() + 'static>, label1: &str,
                            mut closure2: Box<dyn FnMut() + 'static>, label2: &str) -> Window
     {
 
         // region Calculate the window position -- tied to the primary window.
-        let win_center = fltkutils::fltk_find_center_wdgt(primwin);
+        let win_center = fltkutils::fltk_find_center_wndw(primwin);
         let popwidth = 575;  // popwidth & popheight are set to accomodate the size of the buttons.
         let popheight = 100;
 
@@ -215,46 +278,16 @@ pub mod fltkutils {
         popwin
     }
 
-    /*                  Example for using   fltk_popup_2btn()
+    /// Returns the coordinates of the center of `win`.
+    ///
+    pub fn fltk_find_center_wndw(win: &Window) -> (i32, i32) {
+        // todo: Could this be made generic to work with any widget,
+        //          not just windows?
 
-use fltk::{app, window};
-use fltk::enums::Color;
-use fltk::prelude::{GroupExt, WidgetBase, WidgetExt};
-use lib_myfltk::fltkutils::*;
-
-fn main() {
-    let app = app::App::default();
-
-    let mut primwin = window::Window::new(1000, 100, 700, 850, "Two Button Popup Example");
-    primwin.set_color(Color::Yellow);
-    primwin.end();
-    primwin.show();
-
-    let bttn1click = || {
-        println!("\n Button 1 was clicked \n");
-    };
-
-    let bttn2click = || {
-        println!("\n Button 2 was clicked \n");
-    };
-
-    let mut popup = fltk_popup_2btn(&primwin, Box::new(bttn1click), "Button 1",
-                    Box::new(bttn2click), "Button 2");
-
-    popup.end();
-    popup.show();
-
-    app.run().unwrap();
-}
-
-
-     */   //Example for using   fltk_popup_2btn()
-
-    pub fn fltk_find_center_wdgt(wdgt: &Window) -> (i32, i32) {
-        let xxx = wdgt.x();
-        let yyy = wdgt.y();
-        let www = wdgt.w();
-        let hhh = wdgt.h();
+        let xxx = win.x();
+        let yyy = win.y();
+        let www = win.w();
+        let hhh = win.h();
 
         // Calculate the center position of primwin
         let center_x = (xxx + www / 2) as i32;
@@ -263,22 +296,13 @@ fn main() {
         (center_x, center_y)
     }
 
-}  // --------- End   fltkutils   module ----------pub mod input {
+}
 
 pub mod input_fltk {
-/*
-    -- Note that these functions rely on the global variable
-        APP_FLTK having been declared an initialized elsewhere in the program
-        that is accessing this library.
 
-*/  // Note
 /*
-// TODO: Could these all be turned generic instead of needing
-//      a function for each type?
+
 // todo: Still getting "unused" warnings.  Fix it if you can figure out how.
-// todo: Having the APP_FLTK global variable declared & initialized both
-//          here and in the app accessing this library is potentially a problem.
-//          Is it?  Do you need to fix it?
 
 */  // TODO's
 
@@ -286,7 +310,6 @@ use fltk::app::App;
 use fltk::{frame, group, input, window};
 use fltk::enums::CallbackTrigger;
 use fltk::prelude::{GroupExt, InputExt, WidgetExt, WindowExt};
-
 
 pub fn input_strvec(app: &App, prompt: &str, horiz: i32, vert: i32) -> Vec<String> {
     let mut list = Vec::new();
