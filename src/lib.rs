@@ -24,14 +24,13 @@ pub mod fltkutils {
     use std::cell::RefCell;
     use std::mem::take;
     use std::rc::Rc;
-    use fltk::{app, button, button::Button, group, menu, output, text, window};
+    use fltk::{app, button, button::Button, group, menu, output, text};
     use fltk::app::{quit, set_font_size, App};
     use fltk::enums::{Color, Shortcut};
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
     use fltk::window::Window;
     use lib_utils::utilities::util_longest_string_in_vec;
-    use crate::fltkutils;
 
     /// Creates a checkbox shift menu of the items passed to the function
     /// in the `flist` vector.  Returns a vector of the items that were
@@ -95,7 +94,7 @@ pub mod fltkutils {
 
         let longest = util_longest_string_in_vec(&flist);
 
-        let mut win = window::Window::default().with_size(400, 300);
+        let mut win = Window::default().with_size(400, 300);
         let flex = group::Flex::default().with_size(250, 300);   // Do you really need this?
         let scroll = group::Scroll::default().with_size(200, longest as i32 + 10);
         let pack = group::Pack::default().with_size(200, longest as i32 + 10);  // Need this to organize the buttons.
@@ -110,7 +109,7 @@ pub mod fltkutils {
         scroll.end();
         flex.end();
 
-        let mut submit = button::Button::new(300, 175, 75, 30, "Submit");
+        let mut submit = Button::new(300, 175, 75, 30, "Submit");
 
         win.end();
         win.show();
@@ -140,8 +139,8 @@ pub mod fltkutils {
     /// Returns the final contents of the editor.
     pub fn fltk_simple_editor(startertxt: &str, winlabel: &str) -> String {
         let edtr = App::default();
-        let mut buf = text::TextBuffer::default();
-        let mut win = window::Window::default().with_size(800, 300);
+        let mut buf = TextBuffer::default();
+        let mut win = Window::default().with_size(800, 300);
         set_font_size(20);
         win.set_color(Color::Yellow);
         win.set_label(winlabel);
@@ -241,7 +240,7 @@ pub mod fltkutils {
     {
 
         // region Calculate the window position -- tied to the primary window.
-        let win_center = fltkutils::fltk_find_center_wndw(primwin);
+        let win_center = fltk_find_center_wndw(primwin);
         let popwidth = 575;  // popwidth & popheight are set to accomodate the size of the buttons.
         let popheight = 100;
 
@@ -282,8 +281,8 @@ pub mod fltkutils {
         let hhh = win.h();
 
         // Calculate the center position of primwin
-        let center_x = (xxx + www / 2) as i32;
-        let center_y = (yyy + hhh / 2) as i32;
+        let center_x = xxx + www / 2;
+        let center_y = yyy + hhh / 2;
 
         (center_x, center_y)
     }
