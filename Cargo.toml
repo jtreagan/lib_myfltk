@@ -5,7 +5,7 @@ authors = ["John T. Reagan"]
 edition = "2021"
 license = "MIT"
 description = "File handling utility functions."
-readme = "</home/jtreagan/programming/rust/mine/lib_my_fltk/README.MD>"
+readme = "</home/jtreagan/programming/rust/mine/lib_myfltk/README.MD>"
 repository = "<https://github.com/jtreagan/lib_myfltk>"
 
 [dependencies]
