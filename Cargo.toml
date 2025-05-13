@@ -1,11 +1,11 @@
 [package]
 name = "lib_myfltk"
-version = "0.1.0"
+version = "0.1.2"
 authors = ["John T. Reagan"]
 edition = "2021"
 license = "MIT"
-description = "File handling utility functions."
-readme = "/home/jtreagan/programming/rust/mine/lib_myfltk/README.MD"
+description = "Utility functions based on the FLTK.rs GUI library."
+readme = "README.MD"
 repository = "https://github.com/jtreagan/lib_myfltk"
 
 [dependencies]
@@ -13,5 +13,5 @@ repository = "https://github.com/jtreagan/lib_myfltk"
 fltk = { version = "^1.4", features = ["fltk-bundled"] }
 
 # Reagan-created libraries
-lib_utils = "0.1.0"
+lib_utils = "0.1.3"
 

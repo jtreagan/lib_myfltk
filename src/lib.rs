@@ -30,7 +30,7 @@ pub mod fltkutils {
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
     use fltk::window::Window;
-    use lib_utils::utilities::util_longest_string_in_vec;
+    use lib_utils::vec::vec_longest_str_len;
 
     /// Creates a checkbox shift menu of the items passed to the function
     /// in the `flist` vector.  Returns a vector of the items that were
@@ -92,7 +92,7 @@ pub mod fltkutils {
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
 
-        let longest = util_longest_string_in_vec(&flist);
+        let longest = vec_longest_str_len(&flist);
 
         let mut win = Window::default().with_size(400, 300);
         let flex = group::Flex::default().with_size(250, 300);   // Do you really need this?
