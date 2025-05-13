@@ -1,11 +1,17 @@
 [package]
 name = "lib_myfltk"
 version = "0.1.0"
+authors = ["John T. Reagan"]
 edition = "2021"
+license = "MIT"
+description = "File handling utility functions."
+readme = "</home/jtreagan/programming/rust/mine/lib_my_fltk/README.MD>"
+repository = "<https://github.com/jtreagan/lib_myfltk>"
 
 [dependencies]
+# Non-standard crates
 fltk = { version = "^1.4", features = ["fltk-bundled"] }
 
 # Reagan-created libraries
-lib_utils = { git = "https://github.com/jtreagan/lib_utils.git" }
+lib_utils = "0.1.0"
 

@@ -1,0 +1,26 @@
+1. `Color::Background`
+2. `Color::Foreground`
+3. `Color::Button`
+4. `Color::Light3`
+5. `Color::Light2`
+6. `Color::Light1`
+7. `Color::Dark3`
+8. `Color::Dark2`
+9. `Color::Dark1`
+10. `Color::Selection`
+11. `Color::TooltipBg`
+12. `Color::TooltipFg`
+13. `Color::Base`
+14. `Color::Text`
+15. `Color::Red`
+16. `Color::Green`
+17. `Color::Yellow`
+18. `Color::Blue`
+19. `Color::Magenta`
+20. `Color::Cyan`
+21. `Color::DarkRed`
+22. `Color::DarkGreen`
+23. `Color::DarkYellow`     // Comes out more olive green.
+24. `Color::DarkBlue`
+25. `Color::DarkMagenta`    // Purple
+26. `Color::DarkCyan`

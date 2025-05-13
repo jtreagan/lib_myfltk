@@ -159,7 +159,8 @@ dependencies = [
 [[package]]
 name = "lib_utils"
 version = "0.1.0"
-source = "git+https://github.com/jtreagan/lib_utils.git#477400d881ee4980352b5ff5246ac633297a12f8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27f2cb44c21ad433f2167c14dafb2ac47cd35aee67cc929e075f0e7d71cdce26"
 dependencies = [
  "dialoguer",
  "rand",
