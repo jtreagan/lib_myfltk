@@ -86,25 +86,33 @@ pub mod fltkutils {
         retvec
     }
 
-    /// Creates a menu of radio buttons using the `flist` vector.
+    /// Creates a menu of radio buttons using the `items` vector.
     /// Active items are highlighted by a small light.
-    pub fn fltk_radio_lightbtn_menu(flist: &Vec<String>) -> String {
+    pub fn fltk_radio_lightbtn_menu(items: &Vec<String>) -> String {
+
+        // region Set up the variables.
+        // todo: This uses RefCell and Rc.  Is there a better way to do it.
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
+        let longest = vec_longest_str_len(&items);
+        // endregion
 
-        let longest = vec_longest_str_len(&flist);
-
+        // region Set up the window & group widgets.
         let mut win = Window::default().with_size(400, 300);
         let flex = group::Flex::default().with_size(250, 300);   // Do you really need this?
         let scroll = group::Scroll::default().with_size(200, longest as i32 + 10);
         let pack = group::Pack::default().with_size(200, longest as i32 + 10);  // Need this to organize the buttons.
+        // endregion
 
-        for file in flist {
+        // region Set up the radio buttons.
+        for element in items {
             let _radio = button::RadioLightButton::default()
-                .with_label(file)
+                .with_label(element)
                 .with_size(0, 30);
         }
+        // endregion
 
+        // region Bring the groups to an end & create the submit button.
         pack.end();
         scroll.end();
         flex.end();
@@ -113,13 +121,16 @@ pub mod fltkutils {
 
         win.end();
         win.show();
+        // endregion
 
+        // region Use the button callbacks to get the selected radio button.
         let keepers_clone = Rc::clone(&keepers);
         let mut win_clone = win.clone();
-
         submit.set_callback(move |_b| {
             for i in 0..pack.children() {
-                let radio: button::RadioLightButton = button::RadioLightButton::from_dyn_widget(&pack.child(i).unwrap()).unwrap();
+                let radio: button::RadioLightButton = 
+                    button::RadioLightButton::from_dyn_widget(&pack.child(i)
+                        .unwrap()).unwrap();  // Complicated.  Is there a better way?
                 if radio.is_toggled() {
                     *keepers_clone.borrow_mut() = radio.label().clone();
                 }
@@ -130,6 +141,7 @@ pub mod fltkutils {
         while win.shown() {
             app::wait();
         }
+        // endregion
 
         let ret: String = keepers.borrow().clone();
         ret
@@ -188,7 +200,7 @@ pub mod fltkutils {
     }
 
     /// Replaces highlighted text in a `TextEditor` with the text
-    /// passe in the `rpltxt` parameter.
+    /// passed in the `rpltxt` parameter.
     pub fn fltk_replace_highlighted_text(edtr: &TextEditor, buf: &mut TextBuffer, rpltxt: &str) {
         let (x, y) = match edtr.buffer().unwrap().selection_position() {
             Some(position) => position,
