@@ -16,33 +16,29 @@ fn main() {
     set_font(FONT);
     set_font_size(FONT_SIZE);   // Set font & size to whatever you like best.
 
-    let mut win1 = Window::default().with_size(40, 20);
+    //let mut win1 = Window::default().with_size(40, 20);
     let label = "123113333zzzzzzzzzzzffffffffffhhhhhhhhhhsdsdfdsfhj";
 
     // Find the dimensions of the button label.
-    let (bttn_width, bttn_height) = fltk_size_bttn_to_fit_label(&mut win1, &label);
+    let (bttn_width, bttn_height) = fltk_size_bttn_to_fit_label(&label);
 
-    let mut win2 = Window::default().with_size(400, 200);
+    let mut win = Window::default().with_size(400, 200);
 
     // Set the dimensions of the window to fit the button.
     // (Note that the window can be any size you like as long as the button fits.)
     let win_width = bttn_width + BTTN_PADDING * 2;
     let win_height = bttn_height + BTTN_PADDING * 2;
-    win2.set_size(win_width, win_height);
-    //win2.set_size(400, 100);
-    println!("\n Window width: {}, Window height: {} \n", win2.w(), win2.h());
+    win.set_size(win_width, win_height);
         
-    win2.begin();  // I'm not sure just why this is needed, but it is.
-
     // Create the button.
     let mut bttn = Button::default().with_size(bttn_width, bttn_height).with_label(label);
 
     // Center the button in the window.
-    let (xxx, yyy) = fltk_center_button_in_win(&win2, &bttn);
+    let (xxx, yyy) = fltk_center_button_in_win(&win, &bttn);
     bttn.set_pos(xxx, yyy);
 
-    win2.end();
-    win2.show();
+    win.end();
+    win.show();
 
     app.run().unwrap();
 }
@@ -50,7 +46,10 @@ fn main() {
 
 /// Returns the dimensions of a button given a label.
 ///
-pub fn fltk_size_bttn_to_fit_label(win: &mut Window, label: &str) -> (i32, i32) {
+pub fn fltk_size_bttn_to_fit_label(label: &str) -> (i32, i32) {
+
+    let mut win = Window::default().with_size(40, 20);
+
     win.show();   // Show the window so you can measure the label.  Note that
     // the only reason you need to show the window is to measure the label.
     // The size of the window doesn't matter as far as the button is concerned.
@@ -74,8 +73,6 @@ pub fn fltk_center_button_in_win(win: &Window, bttn: &Button) -> (i32, i32) {
     let xxx = centerx - (bttn.w() / 2);
     let yyy = centery - (bttn.h() / 2);
 
-    println!("\n Button width == {}    Button height == {} \n", bttn.w(), bttn.h());
-
     (xxx, yyy)
 }
 
@@ -87,7 +84,5 @@ pub fn fltk_center_of_win(win: &Window) -> (i32, i32) {
     let wincenterx = winwidth / 2;
     let wincentery = winheight / 2;
     
-    println!("\n The window center is:  ({} , {}) \n", wincenterx, wincentery);
-
     (wincenterx, wincentery)
 }
