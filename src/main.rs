@@ -7,8 +7,8 @@ use fltk::{button::Button, draw::measure, enums::Font};
 
 const FONT: Font = Font::Helvetica;
 const FONT_SIZE: i32 = 20;
-const LABEL_PADDING: i32 = 10;
-const BTN_PADDING: i32 = 0;
+const BTTN_LABEL_PADDING: i32 = 10;
+const BTTN_PADDING: i32 = 30;
 
 fn main() {
     let app = app::App::default();
@@ -16,31 +16,33 @@ fn main() {
     set_font(FONT);
     set_font_size(FONT_SIZE);   // Set font & size to whatever you like best.
 
-    let mut win = Window::default().with_size(300, 100);
-    let label = "123113333sdsdfdsfhj";
+    let mut win1 = Window::default().with_size(40, 20);
+    let label = "123113333zzzzzzzzzzzffffffffffhhhhhhhhhhsdsdfdsfhj";
 
     // Find the dimensions of the button label.
-    let (bttn_width, bttn_height) = fltk_size_bttn_to_fit_label(&mut win, &label);
+    let (bttn_width, bttn_height) = fltk_size_bttn_to_fit_label(&mut win1, &label);
 
+    let mut win2 = Window::default().with_size(400, 200);
 
     // Set the dimensions of the window to fit the button.
     // (Note that the window can be any size you like as long as the button fits.)
-    let win_width = bttn_width + BTN_PADDING * 2;
-    let win_height = bttn_height + BTN_PADDING * 2;
-    win.set_size(win_width, win_height);
-    win.begin();  // I'm not sure just why this is needed, but it is.
+    let win_width = bttn_width + BTTN_PADDING * 2;
+    let win_height = bttn_height + BTTN_PADDING * 2;
+    win2.set_size(win_width, win_height);
+    //win2.set_size(400, 100);
+    println!("\n Window width: {}, Window height: {} \n", win2.w(), win2.h());
+        
+    win2.begin();  // I'm not sure just why this is needed, but it is.
 
     // Create the button.
     let mut bttn = Button::default().with_size(bttn_width, bttn_height).with_label(label);
 
-
     // Center the button in the window.
-    let (xxx, yyy) = fltk_center_button_in_win(&win, &bttn);
+    let (xxx, yyy) = fltk_center_button_in_win(&win2, &bttn);
     bttn.set_pos(xxx, yyy);
 
-
-    win.end();
-    win.show();
+    win2.end();
+    win2.show();
 
     app.run().unwrap();
 }
@@ -49,12 +51,14 @@ fn main() {
 /// Returns the dimensions of a button given a label.
 ///
 pub fn fltk_size_bttn_to_fit_label(win: &mut Window, label: &str) -> (i32, i32) {
-    win.show();   // Show the window so you can measure the label.
-    draw::set_font(FONT, app::font_size());  // Also needed to measure the label.
+    win.show();   // Show the window so you can measure the label.  Note that
+    // the only reason you need to show the window is to measure the label.
+    // The size of the window doesn't matter as far as the button is concerned.
+    draw::set_font(FONT, app::font_size());  // Also needed so you can measure the label.
     let (label_len, label_height) = measure(&label, false);
 
-    let bttn_width = label_len + LABEL_PADDING * 2;
-    let bttn_height = label_height + LABEL_PADDING * 2;
+    let bttn_width = label_len + BTTN_LABEL_PADDING * 2;
+    let bttn_height = label_height + BTTN_LABEL_PADDING * 2;
 
     win.hide();
     (bttn_width, bttn_height)
@@ -65,21 +69,25 @@ pub fn fltk_size_bttn_to_fit_label(win: &mut Window, label: &str) -> (i32, i32) 
 /// returned by this function are for the top, left positon of the centered button.
 pub fn fltk_center_button_in_win(win: &Window, bttn: &Button) -> (i32, i32) {
 
-    // Find coordinates to enter the button both vertically and horizontally
+    // Find coordinates to center the button both vertically and horizontally
     let (centerx, centery) = fltk_center_of_win(&win);
     let xxx = centerx - (bttn.w() / 2);
     let yyy = centery - (bttn.h() / 2);
+
+    println!("\n Button width == {}    Button height == {} \n", bttn.w(), bttn.h());
 
     (xxx, yyy)
 }
 
 /// Return the coordinates of the center point of a window relative to
-/// the window.  I.e. (0,0) is the top left corner of the window.
+/// the window.  ( (0,0) is the top left corner of the window.)
 pub fn fltk_center_of_win(win: &Window) -> (i32, i32) {
     let winwidth = win.w();
     let winheight = win.h();
     let wincenterx = winwidth / 2;
     let wincentery = winheight / 2;
+    
+    println!("\n The window center is:  ({} , {}) \n", wincenterx, wincentery);
 
     (wincenterx, wincentery)
 }
