@@ -31,7 +31,7 @@ pub mod fltkutils {
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
     use fltk::window::Window;
-    use lib_utils::vec::vec_longest_str_len;
+    use lib_utils::vec::{vec_longest_str, vec_longest_str_len};
 
     /// Creates a checkbox shift menu of the items passed to the function
     /// in the `flist` vector.  Returns a vector of the items that were
@@ -95,21 +95,21 @@ pub mod fltkutils {
         // todo: This uses RefCell and Rc.  Is there a better way to do it.
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
-        let longest = vec_longest_str_len(&items);
+        let longlen = vec_longest_str_len(&items);
         // endregion
 
         // region Set up the window & group widgets.
         let mut win = Window::default().with_size(400, 300);
         let flex = group::Flex::default().with_size(250, 300);   // Do you really need this?
-        let scroll = group::Scroll::default().with_size(200, longest as i32 + 10);
-        let pack = group::Pack::default().with_size(200, longest as i32 + 10);  // Need this to organize the buttons.
+        let scroll = group::Scroll::default().with_size(200, longlen as i32 + 10);
+        let pack = group::Pack::default().with_size(200, longlen as i32 + 10);  // Need this to organize the buttons.
         // endregion
 
-        // region Set up the radio buttons.
+        // region Create the radio buttons.
         for element in items {
             let _radio = button::RadioLightButton::default()
                 .with_label(element)
-                .with_size(0, 30);
+                .with_size(longlen as i32, 30);
         }
         // endregion
 

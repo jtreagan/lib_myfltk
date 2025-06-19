@@ -2,5 +2,13 @@
 -- Renamed some variables.
 -- Documented the function processes.
 
+6/18/20 -- Added   fltk_size_bttn_to_fit_label()   &   fltk_center_button_in_win()   functions
+-- Did documentation and example.
+
+-- Published -- Now at version 0.1.3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 
 
