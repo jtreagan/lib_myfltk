@@ -10,7 +10,7 @@ repository = "https://github.com/jtreagan/lib_myfltk"
 
 [dependencies]
 # Non-standard crates
-fltk = { version = "^1.4", features = ["fltk-bundled"] }
+fltk = { version = "^1.5", features = ["fltk-bundled"] }
 
 # Reagan-created libraries
 lib_utils = "0.1.3"

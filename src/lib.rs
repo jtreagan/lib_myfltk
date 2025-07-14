@@ -31,12 +31,68 @@ pub mod fltkutils {
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
     use fltk::window::Window;
-    use lib_utils::vec::{vec_longest_str, vec_longest_str_len};
+    use lib_utils::vec::{vec_longest_str_len};
+
+
+    pub fn fltk_checkbox_menu(app: App, labels: &Vec<String>) -> Vec<String> {
+
+        // region Setup initial window & etc.
+        let mut win = Window::default().with_size(400, 300);
+        let mut submit = Button::new(160, 210, 80, 40, "Submit");
+        let pack = group::Pack::new(win.w()/2 - 100, 30, 100, 300, "");
+        // endregion
+
+        // region Create the checkboxes within the pack..
+        let mut chkbttns = Vec::new();
+        for item in labels {
+            let _checkbox = button::CheckButton::default()
+                .with_label(item)
+                .with_size(0, 30);  // The pack takes care of positioning the checkboxes?
+            chkbttns.push(_checkbox);
+        }
+        // endregion
+
+        // region End the pack & window.
+        pack.end();
+        win.end();
+        win.show();
+        // endregion
+
+        // region Do the Submit button callback.
+
+        // Create the Rc to extract the value.  Then clone it for the callback.
+        let newvec: Vec<String> = Vec::new();
+        let checked = Rc::new(RefCell::new(newvec));
+        let checked_clone = checked.clone();
+        let chkbttns_clone = chkbttns.clone();
+
+        submit.set_callback(move |_| {
+            for item in &chkbttns_clone {
+                if item.is_checked() {
+                    checked_clone.borrow_mut().push(item.label().to_string());
+                }
+            }
+
+            println!("\n The clone within the callback is: {:?} \n", *checked_clone.borrow_mut());
+            win.hide();  // close the window
+
+        });
+
+        // Run the app
+        while app.wait(){}
+
+        println!("\n The checked vector after exiting the callback is: {:?} \n", *checked.borrow_mut());
+        let returnvec = take(&mut *checked.borrow_mut());
+        returnvec
+
+    }
 
     /// Creates a checkbox shift menu of the items passed to the function
     /// in the `flist` vector.  Returns a vector of the items that were
     /// chosen by the user.
     pub fn fltk_chkbox_shift_menu(flist: &Vec<String>) -> Vec<String> {
+        // todo: This uses RefCell and Rc.  Is there a better way to do it?
+
         let newvec: RefCell<Vec<String>> = RefCell::new(Vec::new());
         let keepers: Rc<RefCell<Vec<String>>> = Rc::new(newvec);
 
@@ -89,17 +145,17 @@ pub mod fltkutils {
 
     /// Creates a menu of radio buttons using the `items` vector.
     /// Active items are highlighted by a small light.
-    pub fn fltk_radio_lightbtn_menu(items: &Vec<String>) -> String {
+    pub fn fltk_radio_lightbtn_menu(items: &Vec<String>, prompt: &str) -> String {
 
         // region Set up the variables.
         // todo: This uses RefCell and Rc.  Is there a better way to do it.
         let newstring: RefCell<String> = RefCell::new("".to_string());
         let keepers: Rc<RefCell<String>> = Rc::new(newstring);
-        let longlen = vec_longest_str_len(&items);
+        let longlen = vec_longest_str_len(items);
         // endregion
 
         // region Set up the window & group widgets.
-        let mut win = Window::default().with_size(400, 300);
+        let mut win = Window::default().with_size(400, 300).with_label(prompt);
         let flex = group::Flex::default().with_size(250, 300);   // Do you really need this?
         let scroll = group::Scroll::default().with_size(200, longlen as i32 + 10);
         let pack = group::Pack::default().with_size(200, longlen as i32 + 10);  // Need this to organize the buttons.
@@ -113,7 +169,7 @@ pub mod fltkutils {
         }
         // endregion
 
-        // region Bring the groups to an end & create the submit button.
+        // region End adding widgets to the groups & create the submit button.
         pack.end();
         scroll.end();
         flex.end();
