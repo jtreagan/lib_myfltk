@@ -1,6 +1,7 @@
 
 
-use lib_myfltk::fltkutils::{fltk_checkbox_menu};
+use lib_myfltk::fltkutils::*;
+
 
 fn main() {
     let app = fltk::app::App::default();
