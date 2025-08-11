@@ -13,6 +13,11 @@
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+8-11-250 -- Added a `templates` module to `lib.rs`.  Then added `multivariable_input_window_template()` as an example of creating an input box that uses Radio buttons, Check buttons, and Input fields to gather data.  I then copied the `vrbl_parameters_input_box()` function over from `Question Bank Creator` to demo how it can be implemented.  Had to place the function code in a block comment to avoid `unused code` warnings from the compiler.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
 
 

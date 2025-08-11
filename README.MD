@@ -7,6 +7,13 @@ I wrote the functions in this crate to help with other projects on which I am wo
 ## Word of Caution
 These functions tend to be weak on error handling.  My suggestion is to copy the code into your project and then modify from there.  Better than building from scratch.  I think.  Have fun!
 
+## Library structure
+The `lib_myfltk` library has three modules.
+
+   * pub mod fltkutils -- Contains miscellaneous utilities for use with the FLTK-rs GUI.
+   * pub mod input_fltk -- Functions for FLTK-rs that use the `fltk::input` module.
+   * mod templates -- Functions that need to be modified for use in whatever application they are being used in.  The code is there to be copied as needed and then pasted into the developer's code.
+
 ## License
 MIT license.
 
