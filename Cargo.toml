@@ -1,11 +1,12 @@
 [package]
 name = "lib_myfltk"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["John T. Reagan"]
 edition = "2021"
 license = "MIT"
 description = "Utility functions based on the FLTK.rs GUI library."
 readme = "README.MD"
+documentation = "https://docs.rs/lib_myfltk"
 repository = "https://github.com/jtreagan/lib_myfltk"
 
 [dependencies]
