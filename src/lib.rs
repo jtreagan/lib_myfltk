@@ -713,14 +713,14 @@ pub fn input_limited(app: &App, prompt: &str, valid_inputs: Vec<&str>) -> String
 
         // region Set up the window and input box.
 
-        let mut wind = window::Window::new(900, 400, 500, 200, prompt);
+        let mut wind = window::Window::new(900, 400, 600, 200, prompt);
         let mut inputbox = input::Input::new(150, 50, 300, 30, "Enter value:");
 
         // Create tooltip from accepted values
         let tooltip_text = format!("Only {} are accepted", valid_inputs.join(", "));
         inputbox.set_tooltip(&tooltip_text);
 
-        let mut outputframe = frame::Frame::new(10, 100, 400, 30, "");
+        let mut outputframe = frame::Frame::new(1, 100, 600, 30, "");  // For valid/invalid message
         outputframe.set_label_color(enums::Color::Red);
 
         wind.end();
@@ -805,42 +805,8 @@ pub fn input_limited(app: &App, prompt: &str, valid_inputs: Vec<&str>) -> String
 /// Note:  Returns `false` if widget contents is empty.
 pub fn input_truefalse(app: &App, prompt: &str) -> bool {
 
-    // todo: Add `input_limited` to limit input to "yes" or "no".
-
-  /*
-    // region Set up the input window and input frame
-    let mut win = window::Window::default().with_size(horiz, vert).with_label("Input Window");
-    win.make_resizable(true);
-
-    let flex = group::Flex::default().with_size(200, 75).column().center_of_parent();
-    let _prompttext = frame::Frame::default().with_label(prompt);
-*/
-
-    /*
-        // Set up the input widget inside the frame.
-    let mut input_widget = input::Input::default();
-    input_widget.set_trigger(CallbackTrigger::EnterKey);
-
-        // Set the input widget's callback.
-    let mut win2 = win.clone();
-    input_widget.set_callback(move |_| {
-        win2.hide();
-    });
-    */
-
-    //flex.end();
-    //win.end();
-    //win.show();
-    // endregion
-
-    // region Deal with the input
-
     let acceptable = vec!["yes", "Yes", "y", "Y", "no", "No", "n", "N", "true", "t", "false", "f", "True", "T","False", "F"];
-    let mut userinput = input_limited(app, prompt, acceptable).to_uppercase();
-
-    //while win.shown() {
-        //app.wait();
-    //}
+    let userinput = input_limited(app, prompt, acceptable).to_uppercase();
 
     let mut truth_value: bool = false;
 
@@ -882,8 +848,7 @@ pub fn input_truefalse(app: &App, prompt: &str) -> bool {
             }
             _ => {
                 truth_value = false;
-                //println!(
-                   // "\n Please enter one of  yes, Yes, y, Y, no, No, n, N, true, t, false, f, True, T, False, or F \n");
+
                 break;
             }
         };
