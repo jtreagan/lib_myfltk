@@ -704,11 +704,48 @@ pub fn input_f64(app: &App, prompt: &str) -> f64 {
     // endregion
 }
 
-
-
-
-    /// If the user manually closes the input window without entering a valid value,
-    /// the function will return an empty string.
+/// Displays an input dialog allowing the user to enter a value matching specific criteria.
+///
+/// The `input_limited` function creates a graphical prompt to request user input.
+/// It ensures that the entered value is within a set of valid options, providing immediate
+/// feedback to the user in the form of validation messages. A tooltip is also added to guide
+/// the user with the allowed inputs. The dialog remains open until a valid input is provided
+/// or the window is closed.
+///
+/// # Arguments
+/// - `app`: Reference to the `App` object, typically an instance of the FLTK application.
+/// - `prompt`: The title of the window and prompt message displayed to the user.
+/// - `valid_inputs`: A vector of acceptable string inputs.
+///
+/// # Returns
+/// - A `String` representing the validated user input if a valid value is received.
+/// - An empty string (`String::new()`) if the window is closed without providing a valid input.
+///
+/// # Behavior
+/// - When the user enters input:
+///     - If the input is valid, it displays a green valid message and closes the dialog.
+///     - If the input is invalid, it displays a red error message and clears the input box.
+/// - Feedback is given immediately when the user presses "Enter" or unfocuses the input box.
+/// - A tooltip is displayed in the input box, listing all acceptable values.
+///
+/// # Validations
+/// - The entered value must match one of the strings in the `valid_inputs` vector, case-sensitive.
+///
+/// # Example
+///     fn main() {
+///         let app = app::App::default();
+///         let accepted_values = vec!["a", "Tom", "Go"];
+///         let result = input_limited(&app, accepted_values);
+///         println!("\n The user entered: {} \n", result);
+///     }
+///
+/// # Requirements
+/// - Requires the FLTK library for UI functionality.
+///
+/// # Notes
+/// - Closing the window without providing valid input results in an empty string being returned.
+/// - Tooltip hints the valid inputs in a comma-separated format.
+///
 pub fn input_limited(app: &App, prompt: &str, valid_inputs: Vec<&str>) -> String {
 
         // region Set up the window and input box.
@@ -792,79 +829,67 @@ pub fn input_limited(app: &App, prompt: &str, valid_inputs: Vec<&str>) -> String
         String::new() // Return an empty string if window is closed without valid input
     }
 
-
-
-
-/// Uses FLTK's Input widget to prompt the user to enter String data.
+/// Prompts the user with a question and parses their response as a boolean value.
 ///
-/// Works best if you set the horiz and vert to values 10 pixels less than the size
-///      of the main window with the flex size set to 10 pixels less than that.
-/// -- For large input windows try 790 x 490 first.
-/// -- For small input windows try 300 x 90 and adjust by trial and error.
+/// This function takes an `App` instance and a string `prompt`, displays the `prompt` to the user,
+/// and collects input that is restricted to a predefined set of acceptable responses. The input is then
+/// converted and evaluated into a boolean value. The accepted inputs and their corresponding boolean values are:
+/// - `true`: "yes", "Yes", "y", "Y", "true", "True", "t", "T"
+/// - `false`: "no", "No", "n", "N", "false", "False", "f", "F"
 ///
-/// Note:  Returns `false` if widget contents is empty.
+/// # Arguments
+///
+/// * `app` - A reference to the `App` instance, presumably used internally for handling input operations.
+/// * `prompt` - A string slice that is displayed to the user as the input prompt.
+///
+/// # Returns
+///
+/// * `true` for affirmative responses such as "yes", "y", "true", or "t".
+/// * `false` for negative responses such as "no", "n", "false", or "f".
+///
+/// # Behavior
+///
+/// The function internally calls `input_limited` to handle user input and ensure it matches one of the acceptable
+/// values. The input is normalized to uppercase before evaluating it using a `match` statement. If an invalid or
+/// unrecognized input is somehow encountered (although the design of `input_limited` should prevent this), the function
+/// defaults to returning `false`.
+///
+/// # Panics
+///
+/// This function assumes `input_limited` performs all necessary validation and does not explicitly handle `None` or
+/// invalid input cases outside of the defined acceptable responses. Ensure that the set of acceptable responses
+/// passed to `input_limited` is properly maintained.
+///
+/// # Examples
+///     use lib_myfltk::input_fltk::*;
+///
+///     fn main() {
+///         let app = fltk::app::App::default();
+///
+///         let choice = input_truefalse(&app, "Enter yes or no");
+///
+///         println!("\n choice: {} \n", choice);
+///
+///         app.run().unwrap();
+///     }
 pub fn input_truefalse(app: &App, prompt: &str) -> bool {
-
     let acceptable = vec!["yes", "Yes", "y", "Y", "no", "No", "n", "N", "true", "t", "false", "f", "True", "T","False", "F"];
     let userinput = input_limited(app, prompt, acceptable).to_uppercase();
+    let content = userinput.to_uppercase();
 
-    let mut truth_value: bool = false;
-
-    loop {
-        let content = userinput.to_uppercase();
-
-        match content.as_str() {
-            "YES" => {
-                truth_value = true;
-                break;
-            }
-            "Y" => {
-                truth_value = true;
-                break;
-            }
-            "NO" => {
-                truth_value = false;
-                break;
-            }
-            "N" => {
-                truth_value = false;
-                break;
-            }
-            "TRUE" => {
-                truth_value = true;
-                break;
-            }
-            "T" => {
-                truth_value = true;
-                break;
-            }
-            "FALSE" => {
-                truth_value = false;
-                break;
-            }
-            "F" => {
-                truth_value = false;
-                break;
-            }
-            _ => {
-                truth_value = false;
-
-                break;
-            }
-        };
+    match content.as_str() {
+        "YES"   =>  {true}
+        "Y"     =>  {true}
+        "NO"    =>  {false}
+        "N"     =>  {false}
+        "TRUE"  =>  {true}
+        "T"     =>  {true}
+        "FALSE" =>  {false}
+        "F"     =>  {false}
+        _       =>  {false}
     }
-    truth_value
-
-    // endregion
 }
 
-
-
-
-
-
-    
-    
     
 /*
     pub fn input_str_large(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
