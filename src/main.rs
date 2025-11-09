@@ -1,16 +1,16 @@
 
 
 use lib_myfltk::fltkutils::*;
-
+use lib_myfltk::input_fltk::*;
 
 fn main() {
     let app = fltk::app::App::default();
+
+    let acceptable = vec!["yes", "Yes", "y", "Y", "no", "No", "n", "N", "true", "t", "false", "f", "True", "T","False", "F"];
+
+    let choice = input_truefalse(&app, "Enter yes or no");
     
-    let labels = vec!["flamingo".to_string(), "tiger".to_string(), "lion".to_string()];
-    
-    let choice = fltk_checkbox_menu(app.clone(), &labels);
-    
-    println!("\n choice: {:?} \n", choice);
+    println!("\n choice: {} \n", choice);
     
     app.run().unwrap();
 }

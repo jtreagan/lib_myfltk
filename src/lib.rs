@@ -466,9 +466,9 @@ pub mod input_fltk {
 */  // TODO's
 
 use fltk::app::App;
-use fltk::{frame, group, input, window};
-use fltk::enums::{CallbackTrigger};
-use fltk::prelude::{GroupExt, InputExt, WidgetExt, WindowExt};
+use fltk::{app, enums, frame, group, input, window};
+use fltk::enums::{CallbackTrigger, Event, Key};
+use fltk::prelude::{GroupExt, InputExt, WidgetBase, WidgetExt, WindowExt};
 
     /// Allows the user to input a vector of Strings.
 ///
@@ -703,6 +703,199 @@ pub fn input_f64(app: &App, prompt: &str) -> f64 {
 
     // endregion
 }
+
+
+
+
+    /// If the user manually closes the input window without entering a valid value,
+    /// the function will return an empty string.
+pub fn input_limited(app: &App, prompt: &str, valid_inputs: Vec<&str>) -> String {
+
+        // region Set up the window and input box.
+
+        let mut wind = window::Window::new(900, 400, 500, 200, prompt);
+        let mut inputbox = input::Input::new(150, 50, 300, 30, "Enter value:");
+
+        // Create tooltip from accepted values
+        let tooltip_text = format!("Only {} are accepted", valid_inputs.join(", "));
+        inputbox.set_tooltip(&tooltip_text);
+
+        let mut outputframe = frame::Frame::new(10, 100, 400, 30, "");
+        outputframe.set_label_color(enums::Color::Red);
+
+        wind.end();
+        wind.show();
+        // endregion
+
+        // region Handle the input box events.
+
+            // Convert to owned Strings for the closure
+        let valid_inputs_owned: Vec<String> = valid_inputs.iter().map(|s| s.to_string()).collect();
+        let error_message = format!("✗ Invalid! Use: {}", valid_inputs.join(", "));
+
+            // Use a channel to communicate the result
+        let (sender, receiver) = app::channel::<String>();
+
+        inputbox.handle(move |i, ev| {
+            match ev {
+                Event::Unfocus => {  // If the input box loses focus, handle the contents.
+                    let text = i.value();
+                    if !text.is_empty() {
+                        if valid_inputs_owned.iter().any(|v| v == &text) {
+                            outputframe.set_label("✓ Valid input");
+                            outputframe.set_label_color(enums::Color::Green);
+                            sender.send(text);  // This is where the result is sent to be returned.
+                        } else {
+                            outputframe.set_label(&error_message);
+                            outputframe.set_label_color(enums::Color::Red);
+                            i.set_value(""); // Clear invalid input
+                        }
+                    } else {
+                        outputframe.set_label("");
+                    }
+                    app::redraw();
+                    false
+                }
+                Event::KeyDown => {
+                    if app::event_key() == Key::Enter {
+                        let text = i.value();
+                        if !text.is_empty() {
+                            if valid_inputs_owned.iter().any(|v| v == &text) {
+                                outputframe.set_label("✓ Valid input");
+                                outputframe.set_label_color(enums::Color::Green);
+                                sender.send(text);
+                            } else {
+                                outputframe.set_label(&error_message);
+                                outputframe.set_label_color(enums::Color::Red);
+                                i.set_value(""); // Clear invalid input
+                            }
+                        } else {
+                            outputframe.set_label("");
+                        }
+                        app::redraw();
+                    }
+                    false
+                }
+                _ => false,
+            }
+        });
+        // endregion
+
+        // Wait for valid input
+        while app.wait() {
+            if let Some(msg) = receiver.recv() {
+                wind.hide();
+                return msg;
+            }
+        }
+
+        String::new() // Return an empty string if window is closed without valid input
+    }
+
+
+
+
+/// Uses FLTK's Input widget to prompt the user to enter String data.
+///
+/// Works best if you set the horiz and vert to values 10 pixels less than the size
+///      of the main window with the flex size set to 10 pixels less than that.
+/// -- For large input windows try 790 x 490 first.
+/// -- For small input windows try 300 x 90 and adjust by trial and error.
+///
+/// Note:  Returns `false` if widget contents is empty.
+pub fn input_truefalse(app: &App, prompt: &str) -> bool {
+
+    // todo: Add `input_limited` to limit input to "yes" or "no".
+
+  /*
+    // region Set up the input window and input frame
+    let mut win = window::Window::default().with_size(horiz, vert).with_label("Input Window");
+    win.make_resizable(true);
+
+    let flex = group::Flex::default().with_size(200, 75).column().center_of_parent();
+    let _prompttext = frame::Frame::default().with_label(prompt);
+*/
+
+    /*
+        // Set up the input widget inside the frame.
+    let mut input_widget = input::Input::default();
+    input_widget.set_trigger(CallbackTrigger::EnterKey);
+
+        // Set the input widget's callback.
+    let mut win2 = win.clone();
+    input_widget.set_callback(move |_| {
+        win2.hide();
+    });
+    */
+
+    //flex.end();
+    //win.end();
+    //win.show();
+    // endregion
+
+    // region Deal with the input
+
+    let acceptable = vec!["yes", "Yes", "y", "Y", "no", "No", "n", "N", "true", "t", "false", "f", "True", "T","False", "F"];
+    let mut userinput = input_limited(app, prompt, acceptable).to_uppercase();
+
+    //while win.shown() {
+        //app.wait();
+    //}
+
+    let mut truth_value: bool = false;
+
+    loop {
+        let content = userinput.to_uppercase();
+
+        match content.as_str() {
+            "YES" => {
+                truth_value = true;
+                break;
+            }
+            "Y" => {
+                truth_value = true;
+                break;
+            }
+            "NO" => {
+                truth_value = false;
+                break;
+            }
+            "N" => {
+                truth_value = false;
+                break;
+            }
+            "TRUE" => {
+                truth_value = true;
+                break;
+            }
+            "T" => {
+                truth_value = true;
+                break;
+            }
+            "FALSE" => {
+                truth_value = false;
+                break;
+            }
+            "F" => {
+                truth_value = false;
+                break;
+            }
+            _ => {
+                truth_value = false;
+                //println!(
+                   // "\n Please enter one of  yes, Yes, y, Y, no, No, n, N, true, t, false, f, True, T, False, or F \n");
+                break;
+            }
+        };
+    }
+    truth_value
+
+    // endregion
+}
+
+
+
+
 
 
     
