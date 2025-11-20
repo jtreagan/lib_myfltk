@@ -29,6 +29,7 @@ pub mod fltkutils {
     use fltk::app::{quit, set_font_size, App};
     use fltk::draw::measure;
     use fltk::enums::{Color, Font, Shortcut};
+    use fltk::frame::Frame;
     use fltk::prelude::{DisplayExt, GroupExt, InputExt, MenuExt, WidgetBase, WidgetExt, WindowExt};
     use fltk::text::{TextBuffer, TextEditor};
     use fltk::window::Window;
@@ -453,6 +454,64 @@ pub mod fltkutils {
 
         (xxx, yyy)
     }
+
+    /// Displays a custom modal dialog box with a given message and a single button.
+    ///
+    /// # Parameters
+    /// - `msg`: A string slice (&str) that specifies the message to be displayed
+    ///     in the dialog box.
+    /// - `btn_label`: A string slice (&str) that specifies the label of the button.
+    ///
+    /// The dialog box contains the following elements:
+    /// - A non-editable frame in the center displaying the given message (`msg`).
+    /// - A button below the frame, with the label defined by `btn_label`.
+    ///     Clicking the button will close the dialog box.
+    ///
+    /// The dialog box is centered on the screen, created as a modal window, and blocks further
+    /// interaction until the user closes it by interacting with the button.
+    ///
+    /// # Example
+    ///
+    ///     use fltk::app;
+    ///
+    ///     fn main() {
+    ///         let app = app::App::default();
+    ///         fltk_custom_message("This is a custom message", "OK");
+    ///         app.run().unwrap();
+    ///     }
+    ///
+    ///
+    /// # Note
+    /// This function is designed to work with the FLTK library, so make sure the library
+    /// is included in your project dependencies.
+    ///
+    /// The `app::wait()` loop ensures that the application properly processes events
+    /// and waits for the window to close.
+    ///
+    pub fn fltk_custom_message(msg: &str, btn_label: &str) {
+        let mut win = Window::default()
+            .with_size(300, 130)
+            .with_label("Message")
+            .center_screen();
+
+        let mut frame = Frame::new(20, 20, 260, 50, msg);
+        frame.set_align(fltk::enums::Align::Center | fltk::enums::Align::Inside);
+
+        let mut btn = Button::new(50, 80, 200, 30, btn_label);
+        btn.set_callback(move |b| {
+            b.window().unwrap().hide();
+        });
+
+        win.end();
+        win.make_modal(true);
+        win.show();
+
+        while win.shown() {
+            app::wait();
+        }
+    }
+
+
 
 }
 

@@ -1,13 +1,9 @@
+use fltk::app;
 
-
-use lib_myfltk::input_fltk::*;
+use lib_myfltk::fltkutils::fltk_custom_message;
 
 fn main() {
-    let app = fltk::app::App::default();
+    let app = app::App::default(); // Ensure App is initialized if not already
 
-    let choice = input_truefalse(&app, "Enter yes or no");
-    
-    println!("\n choice: {} \n", choice);
-    
-    app.run().unwrap();
+    fltk_custom_message("That folder is empty.", "Return to Main Menu");
 }

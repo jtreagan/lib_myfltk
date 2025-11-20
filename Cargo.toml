@@ -1,6 +1,6 @@
 [package]
 name = "lib_myfltk"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["John T. Reagan"]
 edition = "2024"
 license = "MIT"
