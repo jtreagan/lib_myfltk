@@ -1,5 +1,5 @@
 use fltk::app;
-use lib_myfltk::input_fltk::{input_char, input_string};
+use lib_myfltk::input_fltk::*;
 
 fn main() {
     let app = app::App::default(); // Ensure App is initialized if not already

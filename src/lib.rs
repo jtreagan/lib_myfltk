@@ -611,17 +611,17 @@ pub fn input_i64vec(app: &App, prompt: &str) -> Vec<i64> {
 ///
 ///      use fltk::app;
 ///      use lib_myfltk::input_fltk::input_string;
-/// 
+///
 ///      fn main() {
 ///         let app = app::App::default(); // Ensure App is initialized if not already
-/// 
+///
 ///         let newstring = input_string(&app, "Try a dry Enter", 400, 200);
-/// 
+///
 ///         println!("\n The string entered was: {} \n", newstring);
 ///     }
 ///
 /// # Notes
-/// 
+///
 /// - The input window is resizable by default.
 /// - The function blocks further code execution until the input window is closed.
 /// - Only the "Enter" key submission is supported; other forms of input submission are not handled.
@@ -669,56 +669,9 @@ pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
 }
 
 
-
-
-
-    /// Uses FLTK's Input widget to prompt the user to enter String data.
-///
-/// Works best if you set the horiz and vert to values 10 pixels less than the size
-///      of the main window with the flex size set to 10 pixels less than that.
-/// -- For large input windows try 790 x 490 first.
-/// -- For small input windows try 300 x 90 and adjust by trial and error.
-pub fn input_string_old(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
-
-    // region Set up the input window and input frame
-    let mut win = window::Window::default()
-        .with_size(horiz, vert)
-        .with_label("Input Window");
-    win.make_resizable(true);
-
-    let flex = group::Flex::default()
-        .with_size(200, 75)
-        .column()
-        .center_of_parent();
-
-    let _prompttext = frame::Frame::default().with_label(prompt);
-    // endregion
-
-    // region Set up the input widget inside the frame.
-    let mut input_widget = input::Input::default();
-    input_widget.set_trigger(CallbackTrigger::EnterKey);
-
-        // Set the input widget's callback.
-    let mut win2 = win.clone();
-    input_widget.set_callback(move |_| {
-
-        println!("\n DEBUG: Callback triggered! \n");
-
-        win2.hide();
-    });
-
-    flex.end();
-    win.end();
-    win.show();
-    // endregion
-
-    // region Deal with the input
-    while win.shown() {
-        app.wait();
-    }
-    input_widget.value()
-    // endregion
-}
+// todo: Modify the below functions to match `input_string` above useing the same code
+//       to make sure the widget returns an empty value if the user presses "Enter"
+//       without entering any text.
 
 /// Uses FLTK's Input widget to prompt the user to enter character data.
 ///
@@ -847,6 +800,8 @@ pub fn input_f64(app: &App, prompt: &str) -> f64 {
 
     // endregion
 }
+
+
 
 /// Displays an input dialog allowing the user to enter a value matching specific criteria.
 ///
