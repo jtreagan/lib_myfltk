@@ -510,10 +510,7 @@ pub mod fltkutils {
             app::wait();
         }
     }
-
-
-
-}
+}  // end of module lib_myfltk
 
 /// Input functions for FLTK-RS using the `fltk::input` module.
 ///  
@@ -589,14 +586,99 @@ pub fn input_i64vec(app: &App, prompt: &str) -> Vec<i64> {
 }
 
 
+/// Displays a window prompting the user to input a string and returns the entered value.
+///
+/// The `input_string` function creates a resizable input window with a specified size.
+/// It displays a prompt message and allows the user to input text. Once the "Enter" key is pressed,
+/// the window is closed and the entered text is returned as a `String`.
+///
+/// # Parameters
+/// - `app`: A reference to the `App` instance, which is the main application loop for event handling and UI management.
+/// - `prompt`: A `&str` containing the message to display as the prompt above the input field.
+/// - `horiz`: An `i32` representing the width of the input window.
+/// - `vert`: An `i32` representing the height of the input window.
+///
+/// # Returns
+/// - A `String` containing the text entered by the user.
+///
+/// # Behavior
+/// - Creates a pop-up window with the specified dimensions (`horiz` x `vert`) and a prompt message.
+/// - Displays an input field where the user can type text.
+/// - Waits for the "Enter" key to be pressed to submit the input.
+/// - Closes the input window and returns the input provided.
+///
+/// # Example
+///
+///      use fltk::app;
+///      use lib_myfltk::input_fltk::input_string;
+/// 
+///      fn main() {
+///         let app = app::App::default(); // Ensure App is initialized if not already
+/// 
+///         let newstring = input_string(&app, "Try a dry Enter", 400, 200);
+/// 
+///         println!("\n The string entered was: {} \n", newstring);
+///     }
+///
+/// # Notes
+/// 
+/// - The input window is resizable by default.
+/// - The function blocks further code execution until the input window is closed.
+/// - Only the "Enter" key submission is supported; other forms of input submission are not handled.
+///
+pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
 
-/// Uses FLTK's Input widget to prompt the user to enter String data.
+    // region Set up the input window and input frame
+    let mut win = window::Window::default()
+        .with_size(horiz, vert)
+        .with_label("Input Window");
+    win.make_resizable(true);
+
+    let flex = group::Flex::default()
+        .with_size(200, 75)
+        .column()
+        .center_of_parent();
+
+    let _prompttext = frame::Frame::default().with_label(prompt);
+    // endregion
+
+    // region Set up the input widget inside the frame.
+    let mut input_widget = input::Input::default();
+
+    // Set the input widget's event handler instead of callback
+    let mut win2 = win.clone();
+    input_widget.handle(move |_, event| {
+        if event == Event::KeyDown && app::event_key() == Key::Enter {
+            win2.hide();
+            return true;
+        }
+        false
+    });
+
+    flex.end();
+    win.end();
+    win.show();
+    // endregion
+
+    // region Deal with the input
+        while win.shown() {
+            app.wait();
+        }
+        input_widget.value()
+        // endregion
+}
+
+
+
+
+
+    /// Uses FLTK's Input widget to prompt the user to enter String data.
 ///
 /// Works best if you set the horiz and vert to values 10 pixels less than the size
 ///      of the main window with the flex size set to 10 pixels less than that.
 /// -- For large input windows try 790 x 490 first.
 /// -- For small input windows try 300 x 90 and adjust by trial and error.
-pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
+pub fn input_string_old(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
 
     // region Set up the input window and input frame
     let mut win = window::Window::default()
@@ -616,9 +698,12 @@ pub fn input_string(app: &App, prompt: &str, horiz: i32, vert: i32) -> String {
     let mut input_widget = input::Input::default();
     input_widget.set_trigger(CallbackTrigger::EnterKey);
 
-    // Set the input widget's callback.
+        // Set the input widget's callback.
     let mut win2 = win.clone();
     input_widget.set_callback(move |_| {
+
+        println!("\n DEBUG: Callback triggered! \n");
+
         win2.hide();
     });
 
@@ -988,7 +1073,7 @@ pub fn input_truefalse(app: &App, prompt: &str) -> bool {
     }
 
  */  // input_str_large()
-}
+}  // end of module input_fltk
 
 /// User copyable and modifiable templates using the FLTK-RS GUI.
 ///   
@@ -1425,4 +1510,4 @@ pub fn vrbl_parameters_input_box(var1: &mut Variable) {
 
 */   // Unused code below.
 
-}
+}  // end of module templates
